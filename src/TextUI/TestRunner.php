@@ -1023,93 +1023,33 @@ final class TestRunner extends BaseTestRunner
             }
 
             foreach ($arguments['configuration']->getExtensionConfiguration() as $extension) {
-                if ($extension['file'] !== '' && !\class_exists($extension['class'], false)) {
-                    require_once $extension['file'];
-                }
+                $object = $extension->createInstance();
 
-                if (!\class_exists($extension['class'])) {
-                    throw new Exception(
-                        \sprintf(
-                            'Class "%s" does not exist',
-                            $extension['class']
-                        )
-                    );
-                }
-
-                try {
-                    $extensionClass = new ReflectionClass($extension['class']);
-                } catch (\ReflectionException $e) {
-                    throw new Exception(
-                        $e->getMessage(),
-                        (int) $e->getCode(),
-                        $e
-                    );
-                }
-
-                if (!$extensionClass->implementsInterface(Hook::class)) {
+                if (!$object instanceof Hook) {
                     throw new Exception(
                         \sprintf(
                             'Class "%s" does not implement a PHPUnit\Runner\Hook interface',
-                            $extension['class']
+                            $extension->className()
                         )
                     );
                 }
 
-                if (\count($extension['arguments']) === 0) {
-                    $extensionObject = $extensionClass->newInstance();
-                } else {
-                    $extensionObject = $extensionClass->newInstanceArgs(
-                        $extension['arguments']
-                    );
-                }
-
-                \assert($extensionObject instanceof Hook);
-
-                $this->addExtension($extensionObject);
+                $this->addExtension($object);
             }
 
             foreach ($arguments['configuration']->getListenerConfiguration() as $listener) {
-                if ($listener['file'] !== '' && !\class_exists($listener['class'], false)) {
-                    require_once $listener['file'];
-                }
+                $object = $listener->createInstance();
 
-                if (!\class_exists($listener['class'])) {
-                    throw new Exception(
-                        \sprintf(
-                            'Class "%s" does not exist',
-                            $listener['class']
-                        )
-                    );
-                }
-
-                try {
-                    $listenerClass = new ReflectionClass($listener['class']);
-                } catch (\ReflectionException $e) {
-                    throw new Exception(
-                        $e->getMessage(),
-                        (int) $e->getCode(),
-                        $e
-                    );
-                }
-
-                if (!$listenerClass->implementsInterface(TestListener::class)) {
+                if (!$object instanceof TestListener) {
                     throw new Exception(
                         \sprintf(
                             'Class "%s" does not implement the PHPUnit\Framework\TestListener interface',
-                            $listener['class']
+                            $listener->className()
                         )
                     );
                 }
 
-                if (\count($listener['arguments']) === 0) {
-                    $listener = new $listener['class'];
-                } else {
-                    $listener = $listenerClass->newInstanceArgs(
-                        $listener['arguments']
-                    );
-                }
-
-                $arguments['listeners'][] = $listener;
+                $arguments['listeners'][] = $object;
             }
 
             $loggingConfiguration = $arguments['configuration']->getLoggingConfiguration();
