@@ -12,7 +12,6 @@ namespace PHPUnit\TextUI;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\Test;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\TestListener;
 use PHPUnit\Framework\TestResult;
 use PHPUnit\Framework\TestSuite;
 use PHPUnit\Runner\AfterLastTestHook;
@@ -1023,33 +1022,11 @@ final class TestRunner extends BaseTestRunner
             }
 
             foreach ($arguments['configuration']->getExtensionConfiguration() as $extension) {
-                $object = $extension->createInstance();
-
-                if (!$object instanceof Hook) {
-                    throw new Exception(
-                        \sprintf(
-                            'Class "%s" does not implement a PHPUnit\Runner\Hook interface',
-                            $extension->className()
-                        )
-                    );
-                }
-
-                $this->addExtension($object);
+                $this->addExtension($extension->createHookInstance());
             }
 
             foreach ($arguments['configuration']->getListenerConfiguration() as $listener) {
-                $object = $listener->createInstance();
-
-                if (!$object instanceof TestListener) {
-                    throw new Exception(
-                        \sprintf(
-                            'Class "%s" does not implement the PHPUnit\Framework\TestListener interface',
-                            $listener->className()
-                        )
-                    );
-                }
-
-                $arguments['listeners'][] = $object;
+                $arguments['listeners'][] = $listener->createTestListenerInstance();
             }
 
             $loggingConfiguration = $arguments['configuration']->getLoggingConfiguration();
