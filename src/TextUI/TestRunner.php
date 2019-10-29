@@ -470,35 +470,35 @@ final class TestRunner extends BaseTestRunner
             }
 
             if (isset($arguments['configuration'])) {
+                \assert($arguments['configuration'] instanceof Configuration);
+
                 $filterConfiguration = $arguments['configuration']->getFilterConfiguration();
 
-                if (!empty($filterConfiguration['whitelist'])) {
+                if ($filterConfiguration->hasNonEmptyWhitelist()) {
                     $whitelistFromConfigurationFile = true;
-                }
 
-                if (!empty($filterConfiguration['whitelist'])) {
-                    foreach ($filterConfiguration['whitelist']['include']['directory'] as $dir) {
+                    foreach ($filterConfiguration->directories() as $directory) {
                         $this->codeCoverageFilter->addDirectoryToWhitelist(
-                            $dir['path'],
-                            $dir['suffix'],
-                            $dir['prefix']
+                            $directory->path(),
+                            $directory->suffix(),
+                            $directory->prefix()
                         );
                     }
 
-                    foreach ($filterConfiguration['whitelist']['include']['file'] as $file) {
-                        $this->codeCoverageFilter->addFileToWhitelist($file);
+                    foreach ($filterConfiguration->files() as $file) {
+                        $this->codeCoverageFilter->addFileToWhitelist($file->path());
                     }
 
-                    foreach ($filterConfiguration['whitelist']['exclude']['directory'] as $dir) {
+                    foreach ($filterConfiguration->excludeDirectories() as $directory) {
                         $this->codeCoverageFilter->removeDirectoryFromWhitelist(
-                            $dir['path'],
-                            $dir['suffix'],
-                            $dir['prefix']
+                            $directory->path(),
+                            $directory->suffix(),
+                            $directory->prefix()
                         );
                     }
 
-                    foreach ($filterConfiguration['whitelist']['exclude']['file'] as $file) {
-                        $this->codeCoverageFilter->removeFileFromWhitelist($file);
+                    foreach ($filterConfiguration->excludeFiles() as $file) {
+                        $this->codeCoverageFilter->removeFileFromWhitelist($file->path());
                     }
                 }
             }
@@ -538,14 +538,20 @@ final class TestRunner extends BaseTestRunner
                 $codeCoverage->setDisableIgnoredLines(true);
             }
 
-            if (!empty($filterConfiguration['whitelist'])) {
-                $codeCoverage->setAddUncoveredFilesFromWhitelist(
-                    $filterConfiguration['whitelist']['addUncoveredFilesFromWhitelist']
-                );
+            if (isset($arguments['configuration'])) {
+                \assert($arguments['configuration'] instanceof Configuration);
 
-                $codeCoverage->setProcessUncoveredFilesFromWhitelist(
-                    $filterConfiguration['whitelist']['processUncoveredFilesFromWhitelist']
-                );
+                $filterConfiguration = $arguments['configuration']->getFilterConfiguration();
+
+                if ($filterConfiguration->hasNonEmptyWhitelist()) {
+                    $codeCoverage->setAddUncoveredFilesFromWhitelist(
+                        $filterConfiguration->addUncoveredFilesFromWhitelist()
+                    );
+
+                    $codeCoverage->setProcessUncoveredFilesFromWhitelist(
+                        $filterConfiguration->processUncoveredFilesFromWhitelist()
+                    );
+                }
             }
 
             if (!$this->codeCoverageFilter->hasWhitelist()) {
