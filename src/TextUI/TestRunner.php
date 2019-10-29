@@ -154,7 +154,9 @@ final class TestRunner extends BaseTestRunner
 
         if ($arguments['cacheResult']) {
             if (!isset($arguments['cacheResultFile'])) {
-                if (isset($arguments['configuration']) && $arguments['configuration'] instanceof Configuration) {
+                if (isset($arguments['configuration'])) {
+                    \assert($arguments['configuration'] instanceof Configuration);
+
                     $cacheLocation = $arguments['configuration']->getFilename();
                 } else {
                     $cacheLocation = $_SERVER['PHP_SELF'];
@@ -308,6 +310,8 @@ final class TestRunner extends BaseTestRunner
             $this->writeMessage('Runtime', $this->runtime->getNameWithVersionAndCodeCoverageDriver());
 
             if (isset($arguments['configuration'])) {
+                \assert($arguments['configuration'] instanceof Configuration);
+
                 $this->writeMessage(
                     'Configuration',
                     $arguments['configuration']->getFilename()
@@ -344,20 +348,24 @@ final class TestRunner extends BaseTestRunner
             $this->writeMessage('Warning', 'opcache.save_comments=0 set; annotations will not work');
         }
 
-        if (isset($arguments['configuration']) && $arguments['configuration']->hasValidationErrors()) {
-            $this->write(
-                "\n  Warning - The configuration file did not pass validation!\n  The following problems have been detected:\n"
-            );
+        if (isset($arguments['configuration'])) {
+            \assert($arguments['configuration'] instanceof Configuration);
 
-            foreach ($arguments['configuration']->getValidationErrors() as $line => $errors) {
-                $this->write(\sprintf("\n  Line %d:\n", $line));
+            if ($arguments['configuration']->hasValidationErrors()) {
+                $this->write(
+                    "\n  Warning - The configuration file did not pass validation!\n  The following problems have been detected:\n"
+                );
 
-                foreach ($errors as $msg) {
-                    $this->write(\sprintf("  - %s\n", $msg));
+                foreach ($arguments['configuration']->getValidationErrors() as $line => $errors) {
+                    $this->write(\sprintf("\n  Line %d:\n", $line));
+
+                    foreach ($errors as $msg) {
+                        $this->write(\sprintf("  - %s\n", $msg));
+                    }
                 }
-            }
 
-            $this->write("\n  Test results may not be as expected.\n\n");
+                $this->write("\n  Test results may not be as expected.\n\n");
+            }
         }
 
         if (isset($arguments['conflictBetweenPrinterClassAndTestdox'])) {
