@@ -907,12 +907,12 @@ final class TestRunner extends BaseTestRunner
 
             $groupConfiguration = $arguments['configuration']->getGroupConfiguration();
 
-            if (!empty($groupConfiguration['include']) && !isset($arguments['groups'])) {
-                $arguments['groups'] = $groupConfiguration['include'];
+            if (!isset($arguments['groups']) && $groupConfiguration->hasInclude()) {
+                $arguments['groups'] = $groupConfiguration->include()->asArrayOfStrings();
             }
 
-            if (!empty($groupConfiguration['exclude']) && !isset($arguments['excludeGroups'])) {
-                $arguments['excludeGroups'] = \array_diff($groupConfiguration['exclude'], $groupCliArgs);
+            if (!isset($arguments['excludeGroups']) && $groupConfiguration->hasExclude()) {
+                $arguments['excludeGroups'] = \array_diff($groupConfiguration->exclude()->asArrayOfStrings(), $groupCliArgs);
             }
 
             foreach ($arguments['configuration']->getExtensionConfiguration() as $extension) {
@@ -992,14 +992,12 @@ final class TestRunner extends BaseTestRunner
 
             $testdoxGroupConfiguration = $arguments['configuration']->getTestdoxGroupConfiguration();
 
-            if (isset($testdoxGroupConfiguration['include']) &&
-                !isset($arguments['testdoxGroups'])) {
-                $arguments['testdoxGroups'] = $testdoxGroupConfiguration['include'];
+            if (!isset($arguments['testdoxGroups']) && $testdoxGroupConfiguration->hasInclude()) {
+                $arguments['testdoxGroups'] = $testdoxGroupConfiguration->include()->asArrayOfStrings();
             }
 
-            if (isset($testdoxGroupConfiguration['exclude']) &&
-                !isset($arguments['testdoxExcludeGroups'])) {
-                $arguments['testdoxExcludeGroups'] = $testdoxGroupConfiguration['exclude'];
+            if (!isset($arguments['testdoxExcludeGroups']) && $testdoxGroupConfiguration->hasExclude()) {
+                $arguments['testdoxExcludeGroups'] = $testdoxGroupConfiguration->exclude()->asArrayOfStrings();
             }
         }
 
