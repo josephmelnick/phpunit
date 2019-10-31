@@ -570,7 +570,7 @@ final class TestRunner extends BaseTestRunner
         if (isset($arguments['xdebugFilterFile'], $filterConfiguration)) {
             $this->write("\n");
 
-            $script = (new XdebugFilterScriptGenerator)->generate($filterConfiguration['whitelist']);
+            $script = (new XdebugFilterScriptGenerator)->generate($filterConfiguration);
 
             if ($arguments['xdebugFilterFile'] !== 'php://stdout' && $arguments['xdebugFilterFile'] !== 'php://stderr' && !Filesystem::createDirectory(\dirname($arguments['xdebugFilterFile']))) {
                 $this->write(\sprintf('Cannot write Xdebug filter script to %s ' . \PHP_EOL, $arguments['xdebugFilterFile']));
