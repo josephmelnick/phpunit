@@ -7,10 +7,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\TestFixture\ClassWithUnionReturnTypes;
 
 /**
  * @small
@@ -489,15 +489,6 @@ final class MockObjectTest extends TestCase
                      ->getMock();
 
         $this->assertInstanceOf(Traversable::class, $mock);
-    }
-
-    public function testMultipleInterfacesCanBeMockedInSingleObject(): void
-    {
-        $mock = $this->getMockBuilder([AnInterface::class, AnotherInterface::class])
-                     ->getMock();
-
-        $this->assertInstanceOf(AnInterface::class, $mock);
-        $this->assertInstanceOf(AnotherInterface::class, $mock);
     }
 
     /**
@@ -1029,9 +1020,6 @@ final class MockObjectTest extends TestCase
             'Traversable'                   => ['Traversable'],
             '\Traversable'                  => ['\Traversable'],
             'TraversableMockTestInterface'  => ['TraversableMockTestInterface'],
-            "['Traversable']"               => [['Traversable']],
-            "['Iterator', 'Traversable']"   => [['Iterator', 'Traversable']],
-            "['\Iterator', '\Traversable']" => [['\Iterator', '\Traversable']],
         ];
     }
 
@@ -1109,15 +1097,34 @@ final class MockObjectTest extends TestCase
         $this->assertNull($stub->methodWithVoidReturnTypeDeclaration());
     }
 
-    /**
-     * @requires PHP 7.2
-     */
     public function testObjectReturnTypeIsMockedCorrectly(): void
     {
         /** @var ClassWithAllPossibleReturnTypes|MockObject $stub */
         $stub = $this->createMock(ClassWithAllPossibleReturnTypes::class);
 
         $this->assertInstanceOf(stdClass::class, $stub->methodWithObjectReturnTypeDeclaration());
+    }
+
+    /**
+     * @requires PHP > 8.0
+     */
+    public function testUnionReturnTypeIsDoubledCorrectly(): void
+    {
+        /** @var ClassWithUnionReturnTypes|MockObject $stub */
+        $stub = $this->createMock(ClassWithUnionReturnTypes::class);
+
+        $this->assertFalse($stub->boolOrInt());
+    }
+
+    /**
+     * @requires PHP > 8.0
+     */
+    public function testNullableUnionReturnTypeIsDoubledCorrectly(): void
+    {
+        /** @var ClassWithUnionReturnTypes|MockObject $stub */
+        $stub = $this->createMock(ClassWithUnionReturnTypes::class);
+
+        $this->assertNull($stub->boolOrIntOrNull());
     }
 
     public function testTraitCanBeDoubled(): void

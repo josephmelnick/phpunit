@@ -195,7 +195,7 @@ final class TestClassTest extends TestCase
                         '__SETTING_not_a_setting' => 108,
                     ],
                     'PHP'       => ['version' => '99-dev', 'operator' => ''],
-                    'PHPUnit'   => ['version' => '9-dev', 'operator' => ''],
+                    'PHPUnit'   => ['version' => '99-dev', 'operator' => ''],
                     'OS'        => 'DOESNOTEXIST',
                     'functions' => [
                         'testFuncOne',
@@ -635,13 +635,13 @@ final class TestClassTest extends TestCase
         $expectedAnnotations = [
             '__OFFSET' => [
                 '__FILE'                  => $file,
-                'PHP'                     => 21,
-                'PHPUnit'                 => 22,
-                'OS'                      => 23,
-                'function_testFuncClass'  => 15,
-                'extension_testExtClass'  => 16,
-                'function_testFuncMethod' => 24,
-                'extension_testExtMethod' => 25,
+                'PHP'                     => 20,
+                'PHPUnit'                 => 21,
+                'OS'                      => 22,
+                'function_testFuncClass'  => 14,
+                'extension_testExtClass'  => 15,
+                'function_testFuncMethod' => 23,
+                'extension_testExtMethod' => 24,
             ],
             'PHP'       => ['version' => '5.4', 'operator' => ''],
             'PHPUnit'   => ['version' => '3.7', 'operator' => ''],
@@ -711,7 +711,7 @@ final class TestClassTest extends TestCase
                 '__OFFSET_LINE=100',
                 '__OFFSET_FILE=' . $this->getRequirementsTestClassFile(),
                 'PHP >= 99-dev is required.',
-                'PHPUnit >= 9-dev is required.',
+                'PHPUnit >= 99-dev is required.',
                 'Operating system matching /DOESNOTEXIST/i is required.',
                 'Function testFuncOne is required.',
                 'Function testFunc2 is required.',
@@ -1085,7 +1085,7 @@ final class TestClassTest extends TestCase
         ), VariousDocblockDefinedDataProvider::class);
 
         $this->expectException(Exception::class);
-        $this->expectExceptionMessageRegExp('/^The data set for the @testWith annotation cannot be parsed:/');
+        $this->expectExceptionMessageMatches('/^The data set for the @testWith annotation cannot be parsed:/');
 
         $docBlock->getProvidedData();
     }
@@ -1098,7 +1098,7 @@ final class TestClassTest extends TestCase
         ), VariousDocblockDefinedDataProvider::class);
 
         $this->expectException(Exception::class);
-        $this->expectExceptionMessageRegExp('/^The data set for the @testWith annotation cannot be parsed:/');
+        $this->expectExceptionMessageMatches('/^The data set for the @testWith annotation cannot be parsed:/');
 
         $docBlock->getProvidedData();
     }
@@ -1169,7 +1169,7 @@ final class TestClassTest extends TestCase
             $expected = [TEST_FILES_PATH . 'CoveredClass.php' => $lines];
         }
 
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
             $expected,
             Test::getLinesToBeCovered(
                 $test,
@@ -1414,7 +1414,7 @@ final class TestClassTest extends TestCase
     {
         $this->assertSame(
             [
-                TEST_FILES_PATH . '3194.php' => \array_merge(\range(21, 29), \range(13, 19)),
+                TEST_FILES_PATH . '3194.php' => \array_merge(\range(12, 18), \range(20, 28)),
             ],
             Test::getLinesToBeCovered(
                 \Test3194::class,

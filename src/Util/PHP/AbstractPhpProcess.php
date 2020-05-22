@@ -9,8 +9,7 @@
  */
 namespace PHPUnit\Util\PHP;
 
-use __PHP_Incomplete_Class;
-use ErrorException;
+use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\SyntheticError;
 use PHPUnit\Framework\Test;
@@ -256,10 +255,10 @@ abstract class AbstractPhpProcess
         } else {
             \set_error_handler(
                 /**
-                 * @throws ErrorException
+                 * @throws \ErrorException
                  */
                 static function ($errno, $errstr, $errfile, $errline): void {
-                    throw new ErrorException($errstr, $errno, $errno, $errfile, $errline);
+                    throw new \ErrorException($errstr, $errno, $errno, $errfile, $errline);
                 }
             );
 
@@ -270,7 +269,15 @@ abstract class AbstractPhpProcess
 
                 $childResult = \unserialize(\str_replace("#!/usr/bin/env php\n", '', $stdout));
                 \restore_error_handler();
-            } catch (ErrorException $e) {
+
+                if ($childResult === false) {
+                    $result->addFailure(
+                        $test,
+                        new AssertionFailedError('Test was run in child process and ended unexpectedly'),
+                        $time
+                    );
+                }
+            } catch (\ErrorException $e) {
                 \restore_error_handler();
                 $childResult = false;
 
@@ -364,7 +371,7 @@ abstract class AbstractPhpProcess
     {
         $exception = $error->thrownException();
 
-        if ($exception instanceof __PHP_Incomplete_Class) {
+        if ($exception instanceof \__PHP_Incomplete_Class) {
             $exceptionArray = [];
 
             foreach ((array) $exception as $key => $value) {

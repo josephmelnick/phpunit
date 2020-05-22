@@ -9,8 +9,6 @@
  */
 namespace PHPUnit\Util\TestDox;
 
-use DOMDocument;
-use DOMElement;
 use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Exception;
 use PHPUnit\Framework\Test;
@@ -19,7 +17,6 @@ use PHPUnit\Framework\TestListener;
 use PHPUnit\Framework\TestSuite;
 use PHPUnit\Framework\Warning;
 use PHPUnit\Util\Printer;
-use ReflectionClass;
 
 /**
  * @internal This class is not covered by the backward compatibility promise for PHPUnit
@@ -27,12 +24,12 @@ use ReflectionClass;
 final class XmlResultPrinter extends Printer implements TestListener
 {
     /**
-     * @var DOMDocument
+     * @var \DOMDocument
      */
     private $document;
 
     /**
-     * @var DOMElement
+     * @var \DOMElement
      */
     private $root;
 
@@ -53,7 +50,7 @@ final class XmlResultPrinter extends Printer implements TestListener
      */
     public function __construct($out = null)
     {
-        $this->document               = new DOMDocument('1.0', 'UTF-8');
+        $this->document               = new \DOMDocument('1.0', 'UTF-8');
         $this->document->formatOutput = true;
 
         $this->root = $this->document->createElement('tests');
@@ -222,7 +219,8 @@ final class XmlResultPrinter extends Printer implements TestListener
             }
 
             try {
-                $file = (new ReflectionClass($test))->getFileName();
+                $file = (new \ReflectionClass($test))->getFileName();
+                // @codeCoverageIgnoreStart
             } catch (\ReflectionException $e) {
                 throw new Exception(
                     $e->getMessage(),
@@ -230,6 +228,7 @@ final class XmlResultPrinter extends Printer implements TestListener
                     $e
                 );
             }
+            // @codeCoverageIgnoreEnd
 
             foreach ($steps as $step) {
                 if (isset($step['file']) && $step['file'] === $file) {

@@ -1,5 +1,5 @@
 [33mUsage:[0m
-  phpunit [options] UnitTest [UnitTest.php]
+  phpunit [options] UnitTest.php
   phpunit [options] <directory>
 
 [33mCode Coverage Options:[0m
@@ -82,12 +82,13 @@
   [32m--stop-on-risky            [0m Stop execution upon first risky test
   [32m--stop-on-skipped          [0m Stop execution upon first skipped test
   [32m--stop-on-incomplete       [0m Stop execution upon first incomplete test
-  [32m--fail-on-warning          [0m Treat tests with warnings as failures
+  [32m--fail-on-incomplete       [0m Treat incomplete tests as failures
   [32m--fail-on-risky            [0m Treat risky tests as failures
+  [32m--fail-on-skipped          [0m Treat skipped tests as failures
+  [32m--fail-on-warning          [0m Treat tests with warnings as failures
   [32m-v|--verbose               [0m Output more verbose information
   [32m--debug                    [0m Display debugging information
 
-  [32m--loader [36m<loader>[0m          [0m TestSuiteLoader implementation to use
   [32m--repeat [36m<times>[0m           [0m Runs the test(s) repeatedly
   [32m--teamcity                 [0m Report test execution progress in
                               TeamCity format
@@ -115,6 +116,8 @@
   [32m--no-configuration         [0m Ignore default configuration file
                               (phpunit.xml)
   [32m--no-logging               [0m Ignore logging configuration
+  [32m--extensions [36m<extensions>[0m  [0m A comma separated list of PHPUnit
+                              extensions to load
   [32m--no-extensions            [0m Do not load PHPUnit extensions
   [32m--include-path [36m<path(s)>[0m   [0m Prepend PHP's include_path with given
                               path(s)
