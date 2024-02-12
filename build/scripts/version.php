@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php declare(strict_types=1);
 
-require __DIR__ . '/../../vendor/autoload.php';
+require __DIR__ . '/../../vendor/sebastian/version/src/Version.php';
 
 use SebastianBergmann\Version;
 
@@ -11,4 +11,4 @@ $end     = \strpos($buffer, '\'', $start);
 $version = \substr($buffer, $start, $end - $start);
 $version = new Version($version, __DIR__ . '/../../');
 
-print $version->getVersion();
+print $version->asString();

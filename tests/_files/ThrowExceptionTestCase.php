@@ -7,7 +7,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace PHPUnit\TestFixture;
+
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 class ThrowExceptionTestCase extends TestCase
 {
@@ -20,7 +23,7 @@ class ThrowExceptionTestCase extends TestCase
     {
         throw new RuntimeException(
             'Cannot compute at this time.',
-            9000
+            9000,
         );
     }
 }

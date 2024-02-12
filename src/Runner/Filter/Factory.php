@@ -9,8 +9,10 @@
  */
 namespace PHPUnit\Runner\Filter;
 
+use function assert;
+use FilterIterator;
+use Iterator;
 use PHPUnit\Framework\TestSuite;
-use PHPUnit\Runner\Exception;
 
 /**
  * @internal This class is not covered by the backward compatibility promise for PHPUnit
@@ -18,37 +20,76 @@ use PHPUnit\Runner\Exception;
 final class Factory
 {
     /**
-     * @psalm-var array<int,array{0: \ReflectionClass, 1: array|string}>
+     * @psalm-var list<array{className: class-string, argument: array|string}>
      */
-    private $filters = [];
+    private array $filters = [];
 
     /**
-     * @param array|string $args
-     *
-     * @throws Exception
+     * @psalm-param list<non-empty-string> $testIds
      */
-    public function addFilter(\ReflectionClass $filter, $args): void
+    public function addTestIdFilter(array $testIds): void
     {
-        if (!$filter->isSubclassOf(\RecursiveFilterIterator::class)) {
-            throw new Exception(
-                \sprintf(
-                    'Class "%s" does not extend RecursiveFilterIterator',
-                    $filter->name
-                )
+        $this->filters[] = [
+            'className' => TestIdFilterIterator::class,
+            'argument'  => $testIds,
+        ];
+    }
+
+    /**
+     * @psalm-param list<non-empty-string> $groups
+     */
+    public function addIncludeGroupFilter(array $groups): void
+    {
+        $this->filters[] = [
+            'className' => IncludeGroupFilterIterator::class,
+            'argument'  => $groups,
+        ];
+    }
+
+    /**
+     * @psalm-param list<non-empty-string> $groups
+     */
+    public function addExcludeGroupFilter(array $groups): void
+    {
+        $this->filters[] = [
+            'className' => ExcludeGroupFilterIterator::class,
+            'argument'  => $groups,
+        ];
+    }
+
+    /**
+     * @psalm-param non-empty-string $name
+     */
+    public function addIncludeNameFilter(string $name): void
+    {
+        $this->filters[] = [
+            'className' => IncludeNameFilterIterator::class,
+            'argument'  => $name,
+        ];
+    }
+
+    /**
+     * @psalm-param non-empty-string $name
+     */
+    public function addExcludeNameFilter(string $name): void
+    {
+        $this->filters[] = [
+            'className' => ExcludeNameFilterIterator::class,
+            'argument'  => $name,
+        ];
+    }
+
+    public function factory(Iterator $iterator, TestSuite $suite): FilterIterator
+    {
+        foreach ($this->filters as $filter) {
+            $iterator = new $filter['className'](
+                $iterator,
+                $filter['argument'],
+                $suite,
             );
         }
 
-        $this->filters[] = [$filter, $args];
-    }
-
-    public function factory(\Iterator $iterator, TestSuite $suite): \FilterIterator
-    {
-        foreach ($this->filters as $filter) {
-            [$class, $args] = $filter;
-            $iterator       = $class->newInstance($iterator, $args, $suite);
-        }
-
-        \assert($iterator instanceof \FilterIterator);
+        assert($iterator instanceof FilterIterator);
 
         return $iterator;
     }

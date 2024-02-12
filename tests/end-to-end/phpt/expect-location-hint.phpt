@@ -1,16 +1,18 @@
 --TEST--
 PHPT EXPECT comparison returns correct code location hint
+--SKIPIF--
+<?php if(str_contains((string)ini_get('xdebug.mode'), 'develop')) {
+print 'skip: xdebug.mode=develop is enabled';
+}
 --FILE--
 <?php declare(strict_types=1);
-$arguments = [
-    '--no-configuration',
-    '--verbose',
-    \realpath(__DIR__ . '/../_files/phpt-expect-location-hint-example.phpt'),
-];
-\array_splice($_SERVER['argv'], 1, count($arguments), $arguments);
+$_SERVER['argv'][] = '--do-not-cache-result';
+$_SERVER['argv'][] = '--no-configuration';
+$_SERVER['argv'][] = \realpath(__DIR__ . '/../_files/phpt-expect-location-hint-example.phpt');
 
-require __DIR__ . '/../../bootstrap.php';
-PHPUnit\TextUI\Command::main();
+require_once __DIR__ . '/../../bootstrap.php';
+
+(new PHPUnit\TextUI\Application)->run($_SERVER['argv']);
 --EXPECTF--
 PHPUnit %s by Sebastian Bergmann and contributors.
 

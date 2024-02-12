@@ -1,5 +1,5 @@
 --TEST--
-\PHPUnit\Framework\MockObject\Generator::generate('Foo', [], 'MockFoo', true, true)
+\PHPUnit\Framework\MockObject\Generator\Generator::generate('Foo', [], 'MockFoo', true, true)
 --FILE--
 <?php declare(strict_types=1);
 class Foo
@@ -10,27 +10,31 @@ class Foo
     }
 }
 
-require __DIR__ . '/../../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../bootstrap.php';
 
-$generator = new \PHPUnit\Framework\MockObject\Generator;
+$generator = new \PHPUnit\Framework\MockObject\Generator\Generator;
 
 $mock = $generator->generate(
     'Foo',
+    true,
+    true,
     [],
     'MockFoo',
     true,
     true
 );
 
-print $mock->getClassCode();
+print $mock->classCode();
 --EXPECTF--
 declare(strict_types=1);
 
-class MockFoo extends Foo implements PHPUnit\Framework\MockObject\MockObject
+class MockFoo extends Foo implements PHPUnit\Framework\MockObject\MockObjectInternal
 {
-    use \PHPUnit\Framework\MockObject\Api;
-    use \PHPUnit\Framework\MockObject\Method;
-    use \PHPUnit\Framework\MockObject\MockedCloneMethod;
+    use PHPUnit\Framework\MockObject\StubApi;
+    use PHPUnit\Framework\MockObject\MockObjectApi;
+    use PHPUnit\Framework\MockObject\GeneratedAsMockObject;
+    use PHPUnit\Framework\MockObject\Method;
+    use PHPUnit\Framework\MockObject\DoubledCloneMethod;
 
     public static function bar(string $baz): Bar
     {

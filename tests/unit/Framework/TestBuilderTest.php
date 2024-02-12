@@ -9,110 +9,92 @@
  */
 namespace PHPUnit\Framework;
 
-use PHPUnit\Framework\MockObject\MockObject;
+use function iterator_to_array;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Small;
+use PHPUnit\TestFixture\TestBuilder\TestWithClassLevelIsolationAttributes;
+use PHPUnit\TestFixture\TestBuilder\TestWithDataProvider;
+use PHPUnit\TestFixture\TestBuilder\TestWithMethodLevelIsolationAttributes;
+use PHPUnit\TestFixture\TestBuilder\TestWithoutIsolationAttributes;
+use ReflectionClass;
 
-/**
- * @covers \PHPUnit\Framework\TestBuilder
- */
+#[CoversClass(TestBuilder::class)]
+#[Small]
 final class TestBuilderTest extends TestCase
 {
-    public function testCreateTestForConstructorlessTestClass(): void
+    public function testBuildsTestWithoutMetadataForIsolation(): void
     {
-        $reflector = $this->getMockBuilder(\ReflectionClass::class)
-                          ->setConstructorArgs([$this])
-                          ->getMock();
+        $test = (new TestBuilder)->build(
+            new ReflectionClass(TestWithoutIsolationAttributes::class),
+            'testOne',
+        );
 
-        \assert($reflector instanceof MockObject);
-        \assert($reflector instanceof \ReflectionClass);
+        $this->assertInstanceOf(TestWithoutIsolationAttributes::class, $test);
 
-        $reflector->expects($this->once())
-                  ->method('getConstructor')
-                  ->willReturn(null);
+        $test = $test->valueObjectForEvents();
 
-        $reflector->expects($this->once())
-                  ->method('isInstantiable')
-                  ->willReturn(true);
-
-        $reflector->expects($this->once())
-                  ->method('getName')
-                  ->willReturn(__CLASS__);
-
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('No valid test provided.');
-
-        (new TestBuilder)->build($reflector, 'TestForConstructorlessTestClass');
+        $this->assertSame(TestWithoutIsolationAttributes::class, $test->className());
+        $this->assertSame('testOne', $test->methodName());
+        $this->assertTrue($test->metadata()->isBackupGlobals()->isEmpty());
+        $this->assertTrue($test->metadata()->isBackupStaticProperties()->isEmpty());
+        $this->assertTrue($test->metadata()->isRunClassInSeparateProcess()->isEmpty());
+        $this->assertTrue($test->metadata()->isRunTestsInSeparateProcesses()->isEmpty());
     }
 
-    public function testCreateTestForNotInstantiableTestClass(): void
+    public function testBuildsTestWithClassLevelMetadataForIsolation(): void
     {
-        $reflector = $this->getMockBuilder(\ReflectionClass::class)
-            ->setConstructorArgs([$this])
-            ->getMock();
+        $test = (new TestBuilder)->build(
+            new ReflectionClass(TestWithClassLevelIsolationAttributes::class),
+            'testOne',
+        );
 
-        \assert($reflector instanceof MockObject);
-        \assert($reflector instanceof \ReflectionClass);
+        $this->assertInstanceOf(TestWithClassLevelIsolationAttributes::class, $test);
 
-        $reflector->expects($this->once())
-            ->method('isInstantiable')
-            ->willReturn(false);
+        $test = $test->valueObjectForEvents();
 
-        $reflector->expects($this->once())
-            ->method('getName')
-            ->willReturn('foo');
-
-        $test = (new TestBuilder)->build($reflector, 'TestForNonInstantiableTestClass');
-        $this->assertInstanceOf(WarningTestCase::class, $test);
-        /* @var WarningTestCase $test */
-        $this->assertSame('Cannot instantiate class "foo".', $test->getMessage());
+        $this->assertSame(TestWithClassLevelIsolationAttributes::class, $test->className());
+        $this->assertSame('testOne', $test->methodName());
+        $this->assertTrue($test->metadata()->isBackupGlobals()->asArray()[0]->enabled());
+        $this->assertTrue($test->metadata()->isBackupStaticProperties()->asArray()[0]->enabled());
+        $this->assertTrue($test->metadata()->isRunClassInSeparateProcess()->isNotEmpty());
+        $this->assertTrue($test->metadata()->isRunTestsInSeparateProcesses()->isNotEmpty());
     }
 
-    public function testCreateTestForTestClassWithModifiedConstructor(): void
+    public function testBuildsTestWithMethodLevelMetadataForIsolation(): void
     {
-        $test = (new TestBuilder)->build(new \ReflectionClass(\ModifiedConstructorTestCase::class), 'testCase');
-        $this->assertInstanceOf(\ModifiedConstructorTestCase::class, $test);
+        $test = (new TestBuilder)->build(
+            new ReflectionClass(TestWithMethodLevelIsolationAttributes::class),
+            'testOne',
+        );
+
+        $this->assertInstanceOf(TestWithMethodLevelIsolationAttributes::class, $test);
+
+        $test = $test->valueObjectForEvents();
+
+        $this->assertSame(TestWithMethodLevelIsolationAttributes::class, $test->className());
+        $this->assertSame('testOne', $test->methodName());
+        $this->assertTrue($test->metadata()->isBackupGlobals()->asArray()[0]->enabled());
+        $this->assertTrue($test->metadata()->isBackupStaticProperties()->asArray()[0]->enabled());
+        $this->assertTrue($test->metadata()->isRunInSeparateProcess()->isNotEmpty());
     }
 
-    public function testCreateWithEmptyData(): void
+    public function testBuildsTestWithDataProvider(): void
     {
-        $test = (new TestBuilder)->build(new \ReflectionClass(\EmptyDataProviderTest::class), 'testCase');
+        $test = (new TestBuilder)->build(
+            new ReflectionClass(TestWithDataProvider::class),
+            'testOne',
+        );
+
         $this->assertInstanceOf(DataProviderTestSuite::class, $test);
-        /* @var DataProviderTestSuite $test */
-        $this->assertInstanceOf(SkippedTestCase::class, $test->getGroupDetails()['default'][0]);
-    }
 
-    /**
-     * @dataProvider provideWithAnnotations
-     */
-    public function testWithAnnotations(string $methodName): void
-    {
-        $test = (new TestBuilder)->build(new \ReflectionClass(\TestWithAnnotations::class), $methodName);
-        $this->assertInstanceOf(\TestWithAnnotations::class, $test);
-    }
+        $test = iterator_to_array($test)[0];
 
-    public function provideWithAnnotations(): array
-    {
-        return [
-            ['testThatInteractsWithGlobalVariables'],
-            ['testThatInteractsWithStaticAttributes'],
-            ['testInSeparateProcess'],
-        ];
-    }
+        $this->assertInstanceOf(TestWithDataProvider::class, $test);
 
-    /**
-     * @dataProvider provideWithAnnotationsAndDataProvider
-     */
-    public function testWithAnnotationsAndDataProvider(string $methodName): void
-    {
-        $test = (new TestBuilder)->build(new \ReflectionClass(\TestWithAnnotations::class), $methodName);
-        $this->assertInstanceOf(DataProviderTestSuite::class, $test);
-    }
+        $test = $test->valueObjectForEvents();
 
-    public function provideWithAnnotationsAndDataProvider(): array
-    {
-        return [
-            ['testThatInteractsWithGlobalVariablesWithDataProvider'],
-            ['testThatInteractsWithStaticAttributesWithDataProvider'],
-            ['testInSeparateProcessWithDataProvider'],
-        ];
+        $this->assertSame(TestWithDataProvider::class, $test->className());
+        $this->assertSame('testOne', $test->methodName());
+        $this->assertTrue($test->testData()->hasDataFromDataProvider());
     }
 }

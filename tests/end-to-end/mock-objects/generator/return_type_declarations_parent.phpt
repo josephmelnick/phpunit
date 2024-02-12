@@ -1,5 +1,5 @@
 --TEST--
-\PHPUnit\Framework\MockObject\Generator::generate('Bar', [], 'MockBar', true, true)
+\PHPUnit\Framework\MockObject\Generator\Generator::generate('Bar', [], 'MockBar', true, true)
 --FILE--
 <?php declare(strict_types=1);
 abstract class Foo
@@ -14,30 +14,47 @@ class Bar extends Foo
     }
 }
 
-require __DIR__ . '/../../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../bootstrap.php';
 
-$generator = new \PHPUnit\Framework\MockObject\Generator;
+$generator = new \PHPUnit\Framework\MockObject\Generator\Generator;
 
 $mock = $generator->generate(
     'Bar',
+    true,
+    true,
     [],
     'MockBar',
     true,
     true
 );
 
-print $mock->getClassCode();
+print $mock->classCode();
 --EXPECTF--
 declare(strict_types=1);
 
-class MockBar extends Bar implements PHPUnit\Framework\MockObject\MockObject
+class MockBar extends Bar implements PHPUnit\Framework\MockObject\MockObjectInternal
 {
-    use \PHPUnit\Framework\MockObject\Api;
-    use \PHPUnit\Framework\MockObject\Method;
-    use \PHPUnit\Framework\MockObject\MockedCloneMethod;
+    use PHPUnit\Framework\MockObject\StubApi;
+    use PHPUnit\Framework\MockObject\MockObjectApi;
+    use PHPUnit\Framework\MockObject\GeneratedAsMockObject;
+    use PHPUnit\Framework\MockObject\Method;
+    use PHPUnit\Framework\MockObject\DoubledCloneMethod;
 
     public function baz(): Foo
     {
+        $__phpunit_definedVariables        = get_defined_vars();
+        $__phpunit_namedVariadicParameters = [];
+
+        foreach ($__phpunit_definedVariables as $__phpunit_definedVariableName => $__phpunit_definedVariableValue) {
+            if ((new ReflectionParameter([__CLASS__, __FUNCTION__], $__phpunit_definedVariableName))->isVariadic()) {
+                foreach ($__phpunit_definedVariableValue as $__phpunit_key => $__phpunit_namedValue) {
+                    if (is_string($__phpunit_key)) {
+                        $__phpunit_namedVariadicParameters[$__phpunit_key] = $__phpunit_namedValue;
+                    }
+                }
+            }
+        }
+
         $__phpunit_arguments = [];
         $__phpunit_count     = func_num_args();
 
@@ -48,6 +65,8 @@ class MockBar extends Bar implements PHPUnit\Framework\MockObject\MockObject
                 $__phpunit_arguments[] = $__phpunit_arguments_tmp[$__phpunit_i];
             }
         }
+
+        $__phpunit_arguments = array_merge($__phpunit_arguments, $__phpunit_namedVariadicParameters);
 
         $__phpunit_result = $this->__phpunit_getInvocationHandler()->invoke(
             new \PHPUnit\Framework\MockObject\Invocation(

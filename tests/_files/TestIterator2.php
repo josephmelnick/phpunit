@@ -7,37 +7,45 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-class TestIterator2 implements Iterator
+namespace PHPUnit\TestFixture;
+
+use function current;
+use function key;
+use function next;
+use function reset;
+use Iterator;
+
+final class TestIterator2 implements Iterator
 {
-    protected $data;
+    private array $data;
 
     public function __construct(array $array)
     {
         $this->data = $array;
     }
 
-    public function current()
+    public function current(): mixed
     {
-        return \current($this->data);
+        return current($this->data);
     }
 
     public function next(): void
     {
-        \next($this->data);
+        next($this->data);
     }
 
-    public function key()
+    public function key(): null|int|string
     {
-        return \key($this->data);
+        return key($this->data);
     }
 
-    public function valid()
+    public function valid(): bool
     {
-        return \key($this->data) !== null;
+        return key($this->data) !== null;
     }
 
     public function rewind(): void
     {
-        \reset($this->data);
+        reset($this->data);
     }
 }

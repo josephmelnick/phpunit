@@ -7,24 +7,23 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Foo\DataProviderIssue2833;
+namespace PHPUnit\TestFixture\DataProviderIssue2833;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class FirstTest extends TestCase
 {
-    /**
-     * @dataProvider provide
-     */
-    public function testFirst($x): void
-    {
-        $this->assertTrue(true);
-    }
-
-    public function provide()
+    public static function provide(): array
     {
         SecondTest::DUMMY;
 
         return [[true]];
+    }
+
+    #[DataProvider('provide')]
+    public function testFirst($x): void
+    {
+        $this->assertTrue(true);
     }
 }

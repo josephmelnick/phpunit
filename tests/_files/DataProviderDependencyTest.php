@@ -7,27 +7,29 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-class DataProviderDependencyTest extends PHPUnit\Framework\TestCase
+namespace PHPUnit\TestFixture;
+
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Depends;
+use PHPUnit\Framework\Attributes\Ticket;
+use PHPUnit\Framework\TestCase;
+
+class DataProviderDependencyTest extends TestCase
 {
+    public static function provider(): array
+    {
+        self::markTestSkipped('Any test with this data provider should be skipped.');
+    }
+
     public function testReference(): void
     {
         $this->markTestSkipped('This test should be skipped.');
-        $this->assertTrue(true);
     }
 
-    /**
-     * @see https://github.com/sebastianbergmann/phpunit/issues/1896
-     * @depends testReference
-     * @dataProvider provider
-     */
+    #[Depends('testReference')]
+    #[DataProvider('provider')]
+    #[Ticket('https://github.com/sebastianbergmann/phpunit/issues/1896')]
     public function testDependency($param): void
     {
-    }
-
-    public function provider()
-    {
-        $this->markTestSkipped('Any test with this data provider should be skipped.');
-
-        return [];
     }
 }

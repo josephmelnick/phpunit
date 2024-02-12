@@ -7,11 +7,18 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace PHPUnit\TestFixture;
+
+use ArrayIterator;
+use ArrayObject;
+use Generator;
+use Iterator;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class MultipleDataProviderTest extends TestCase
 {
-    public static function providerA()
+    public static function providerA(): array
     {
         return [
             ['ok', null, null],
@@ -20,7 +27,7 @@ class MultipleDataProviderTest extends TestCase
         ];
     }
 
-    public static function providerB()
+    public static function providerB(): array
     {
         return [
             [null, 'ok', null],
@@ -29,7 +36,7 @@ class MultipleDataProviderTest extends TestCase
         ];
     }
 
-    public static function providerC()
+    public static function providerC(): array
     {
         return [
             [null, null, 'ok'],
@@ -38,7 +45,7 @@ class MultipleDataProviderTest extends TestCase
         ];
     }
 
-    public static function providerD()
+    public static function providerD(): Generator
     {
         yield ['ok', null, null];
 
@@ -47,7 +54,7 @@ class MultipleDataProviderTest extends TestCase
         yield ['ok', null, null];
     }
 
-    public static function providerE()
+    public static function providerE(): Generator
     {
         yield [null, 'ok', null];
 
@@ -56,33 +63,29 @@ class MultipleDataProviderTest extends TestCase
         yield [null, 'ok', null];
     }
 
-    public static function providerF()
+    public static function providerF(): ArrayIterator|Iterator
     {
         $object = new ArrayObject(
             [
                 [null, null, 'ok'],
                 [null, null, 'ok'],
                 [null, null, 'ok'],
-            ]
+            ],
         );
 
         return $object->getIterator();
     }
 
-    /**
-     * @dataProvider providerA
-     * @dataProvider providerB
-     * @dataProvider providerC
-     */
+    #[DataProvider('providerA')]
+    #[DataProvider('providerB')]
+    #[DataProvider('providerC')]
     public function testOne(): void
     {
     }
 
-    /**
-     * @dataProvider providerD
-     * @dataProvider providerE
-     * @dataProvider providerF
-     */
+    #[DataProvider('providerD')]
+    #[DataProvider('providerE')]
+    #[DataProvider('providerF')]
     public function testTwo(): void
     {
     }

@@ -7,20 +7,21 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace PHPUnit\TestFixture;
+
+use Generator;
+use IteratorAggregate;
+
 class WrapperIteratorAggregate implements IteratorAggregate
 {
-    /**
-     * @var array|\Traversable
-     */
-    private $baseCollection;
+    private iterable $baseCollection;
 
-    public function __construct($baseCollection)
+    public function __construct(iterable $baseCollection)
     {
-        \assert(\is_array($baseCollection) || $baseCollection instanceof Traversable);
         $this->baseCollection = $baseCollection;
     }
 
-    public function getIterator()
+    public function getIterator(): Generator
     {
         foreach ($this->baseCollection as $k => $v) {
             yield $k => $v;

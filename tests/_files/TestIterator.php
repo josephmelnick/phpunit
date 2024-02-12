@@ -7,13 +7,17 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-class TestIterator implements Iterator
+namespace PHPUnit\TestFixture;
+
+use function count;
+use Iterator;
+
+final class TestIterator implements Iterator
 {
-    protected $array;
+    private array $array;
+    private int $position = 0;
 
-    protected $position = 0;
-
-    public function __construct($array = [])
+    public function __construct(array $array = [])
     {
         $this->array = $array;
     }
@@ -23,17 +27,17 @@ class TestIterator implements Iterator
         $this->position = 0;
     }
 
-    public function valid()
+    public function valid(): bool
     {
-        return $this->position < \count($this->array);
+        return $this->position < count($this->array);
     }
 
-    public function key()
+    public function key(): int|string
     {
         return $this->position;
     }
 
-    public function current()
+    public function current(): mixed
     {
         return $this->array[$this->position];
     }

@@ -7,20 +7,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace PHPUnit\TestFixture;
+
+use FooBarHandler;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
 final class RouterTest extends TestCase
 {
-    /**
-     * @dataProvider routesProvider
-     * @testdox      Routes $url to $handler
-     */
-    public function testRoutesRequest(string $url, string $handler): void
-    {
-        $this->assertTrue(true);
-    }
-
-    public function routesProvider()
+    public static function routesProvider(): array
     {
         return [
             '/foo/bar' => [
@@ -29,5 +25,12 @@ final class RouterTest extends TestCase
                 // ...
             ],
         ];
+    }
+
+    #[DataProvider('routesProvider')]
+    #[TestDox('Routes $url to $handler')]
+    public function testRoutesRequest(string $url, string $handler): void
+    {
+        $this->assertTrue(true);
     }
 }

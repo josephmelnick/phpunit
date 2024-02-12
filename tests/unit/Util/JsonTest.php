@@ -9,32 +9,17 @@
  */
 namespace PHPUnit\Util;
 
-use PHPUnit\Framework\Exception;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Small;
+use PHPUnit\Framework\Attributes\TestDox;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @small
- */
+#[CoversClass(Json::class)]
+#[Small]
 final class JsonTest extends TestCase
 {
-    /**
-     * @testdox Canonicalize $actual
-     * @dataProvider canonicalizeProvider
-     *
-     * @throws \PHPUnit\Framework\ExpectationFailedException
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     */
-    public function testCanonicalize($actual, $expected, $expectError): void
-    {
-        [$error, $canonicalized] = Json::canonicalize($actual);
-        $this->assertEquals($expectError, $error);
-
-        if (!$expectError) {
-            $this->assertEquals($expected, $canonicalized);
-        }
-    }
-
-    public function canonicalizeProvider(): array
+    public static function canonicalizeProvider(): array
     {
         return [
             ['{"name":"John","age":"35"}', '{"age":"35","name":"John"}', false],
@@ -43,21 +28,7 @@ final class JsonTest extends TestCase
         ];
     }
 
-    /**
-     * @covers \PHPUnit\Util\Json::prettify
-     * @testdox Prettify $actual to $expected
-     * @dataProvider prettifyProvider
-     *
-     * @throws \PHPUnit\Framework\Exception
-     * @throws \PHPUnit\Framework\ExpectationFailedException
-     * @throws \SebastianBergmann\RecursionContext\InvalidArgumentException
-     */
-    public function testPrettify($actual, $expected): void
-    {
-        $this->assertEquals($expected, Json::prettify($actual));
-    }
-
-    public function prettifyProvider(): array
+    public static function prettifyProvider(): array
     {
         return [
             ['{"name":"John","age": "5"}', "{\n    \"name\": \"John\",\n    \"age\": \"5\"\n}"],
@@ -66,23 +37,39 @@ final class JsonTest extends TestCase
         ];
     }
 
-    /**
-     * @covers \PHPUnit\Util\Json::prettify
-     * @dataProvider prettifyExceptionProvider
-     */
-    public function testPrettifyException($json): void
-    {
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('Cannot prettify invalid json');
-
-        Json::prettify($json);
-    }
-
-    public function prettifyExceptionProvider(): array
+    public static function prettifyExceptionProvider(): array
     {
         return [
             ['"name":"John","age": "5"}'],
             [''],
         ];
+    }
+
+    #[DataProvider('canonicalizeProvider')]
+    #[TestDox('Canonicalize $actual')]
+    public function testCanonicalize(string $actual, string $expected, bool $expectError): void
+    {
+        [$error, $canonicalized] = Json::canonicalize($actual);
+
+        $this->assertEquals($expectError, $error);
+
+        if (!$expectError) {
+            $this->assertEquals($expected, $canonicalized);
+        }
+    }
+
+    #[DataProvider('prettifyProvider')]
+    #[TestDox('Prettify $actual to $expected')]
+    public function testPrettify(string $actual, string $expected): void
+    {
+        $this->assertEquals($expected, Json::prettify($actual));
+    }
+
+    #[DataProvider('prettifyExceptionProvider')]
+    public function testPrettifyException(string $json): void
+    {
+        $this->expectException(InvalidJsonException::class);
+
+        Json::prettify($json);
     }
 }

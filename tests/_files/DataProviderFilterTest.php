@@ -7,11 +7,14 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace PHPUnit\TestFixture;
+
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class DataProviderFilterTest extends TestCase
 {
-    public static function truthProvider()
+    public static function truthProvider(): array
     {
         return [
             [true],
@@ -21,27 +24,23 @@ class DataProviderFilterTest extends TestCase
         ];
     }
 
-    public static function falseProvider()
+    public static function falseProvider(): array
     {
         return [
-            'false test'       => [false],
-            'false test 2'     => [false],
-            'other false test' => [false],
-            'other false test2'=> [false],
+            'false test'        => [false],
+            'false test 2'      => [false],
+            'other false test'  => [false],
+            'other false test2' => [false],
         ];
     }
 
-    /**
-     * @dataProvider truthProvider
-     */
+    #[DataProvider('truthProvider')]
     public function testTrue($truth): void
     {
         $this->assertTrue($truth);
     }
 
-    /**
-     * @dataProvider falseProvider
-     */
+    #[DataProvider('falseProvider')]
     public function testFalse($false): void
     {
         $this->assertFalse($false);

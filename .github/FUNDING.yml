@@ -1,2 +1,3 @@
 github: sebastianbergmann
-custom: https://phpunit.de/donate.html
+tidelift: "packagist/phpunit/phpunit"
+custom: https://phpunit.de/sponsors.html

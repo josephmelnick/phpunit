@@ -7,15 +7,13 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace PHPUnit\TestFixture;
+
+use PHPUnit\Framework\Attributes\DataProvider;
+
 abstract class AbstractVariousIterableDataProviderTest
 {
-    abstract public function asArrayProvider();
-
-    abstract public function asIteratorProvider();
-
-    abstract public function asTraversableProvider();
-
-    public function asArrayProviderInParent()
+    public static function asArrayProviderInParent()
     {
         return [
             ['J'],
@@ -24,7 +22,7 @@ abstract class AbstractVariousIterableDataProviderTest
         ];
     }
 
-    public function asIteratorProviderInParent()
+    public static function asIteratorProviderInParent()
     {
         yield ['M'];
 
@@ -33,7 +31,7 @@ abstract class AbstractVariousIterableDataProviderTest
         yield ['O'];
     }
 
-    public function asTraversableProviderInParent()
+    public static function asTraversableProviderInParent()
     {
         return new WrapperIteratorAggregate([
             ['P'],
@@ -42,20 +40,22 @@ abstract class AbstractVariousIterableDataProviderTest
         ]);
     }
 
-    /**
-     * @dataProvider asArrayProvider
-     * @dataProvider asIteratorProvider
-     * @dataProvider asTraversableProvider
-     */
+    abstract public static function asArrayProvider();
+
+    abstract public static function asIteratorProvider();
+
+    abstract public static function asTraversableProvider();
+
+    #[DataProvider('asArrayProvider')]
+    #[DataProvider('asIteratorProvider')]
+    #[DataProvider('asTraversableProvider')]
     public function testAbstract(): void
     {
     }
 
-    /**
-     * @dataProvider asArrayProviderInParent
-     * @dataProvider asIteratorProviderInParent
-     * @dataProvider asTraversableProviderInParent
-     */
+    #[DataProvider('asArrayProviderInParent')]
+    #[DataProvider('asIteratorProviderInParent')]
+    #[DataProvider('asTraversableProviderInParent')]
     public function testInParent(): void
     {
     }

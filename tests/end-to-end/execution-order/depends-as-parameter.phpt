@@ -2,16 +2,17 @@
 phpunit _files/StackTest.php
 --FILE--
 <?php declare(strict_types=1);
-$arguments = [
-    '--no-configuration',
-    \realpath(__DIR__ . '/_files/StackTest.php'),
-];
-\array_splice($_SERVER['argv'], 1, count($arguments), $arguments);
+$_SERVER['argv'][] = '--do-not-cache-result';
+$_SERVER['argv'][] = '--no-configuration';
+$_SERVER['argv'][] = \realpath(__DIR__ . '/_files/StackTest.php');
 
-require __DIR__ . '/../../bootstrap.php';
-PHPUnit\TextUI\Command::main();
+require_once __DIR__ . '/../../bootstrap.php';
+
+(new PHPUnit\TextUI\Application)->run($_SERVER['argv']);
 --EXPECTF--
 PHPUnit %s by Sebastian Bergmann and contributors.
+
+Runtime: %s
 
 ..                                                                  2 / 2 (100%)
 

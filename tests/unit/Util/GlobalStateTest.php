@@ -9,11 +9,12 @@
  */
 namespace PHPUnit\Util;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Small;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @small
- */
+#[CoversClass(GlobalState::class)]
+#[Small]
 final class GlobalStateTest extends TestCase
 {
     public function testIncludedFilesAsStringSkipsVfsProtocols(): void
@@ -21,7 +22,6 @@ final class GlobalStateTest extends TestCase
         $dir   = __DIR__;
         $files = [
             'phpunit', // The 0 index is not used
-            $dir . '/ConfigurationTest.php',
             $dir . '/GlobalStateTest.php',
             'vfs://' . $dir . '/RegexTest.php',
             'phpvfs53e46260465c7://' . $dir . '/TestClassTest.php',
@@ -29,10 +29,9 @@ final class GlobalStateTest extends TestCase
         ];
 
         $this->assertEquals(
-            "require_once '" . $dir . "/ConfigurationTest.php';\n" .
             "require_once '" . $dir . "/GlobalStateTest.php';\n" .
             "require_once 'file://" . $dir . "/XmlTest.php';\n",
-            GlobalState::processIncludedFilesAsString($files)
+            GlobalState::processIncludedFilesAsString($files),
         );
     }
 }

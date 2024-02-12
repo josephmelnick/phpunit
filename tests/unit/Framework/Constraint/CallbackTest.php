@@ -9,60 +9,49 @@
  */
 namespace PHPUnit\Framework\Constraint;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Small;
 use PHPUnit\Framework\ExpectationFailedException;
+use PHPUnit\Framework\TestCase;
 
-/**
- * @small
- */
-final class CallbackTest extends ConstraintTestCase
+#[CoversClass(Callback::class)]
+#[CoversClass(Constraint::class)]
+#[Small]
+final class CallbackTest extends TestCase
 {
-    public static function staticCallbackReturningTrue()
+    public function testCanBeEvaluated(): void
     {
-        return true;
+        $this->assertTrue($this->acceptingCallbackConstraint()->evaluate('actual', returnResult: true));
+        $this->assertFalse($this->rejectingCallbackConstraint()->evaluate('actual', returnResult: true));
+
+        try {
+            $this->rejectingCallbackConstraint()->evaluate('actual');
+        } catch (ExpectationFailedException $e) {
+            $this->assertSame('Failed asserting that \'actual\' is accepted by specified callback.', $e->getMessage());
+
+            return;
+        }
+
+        $this->fail();
     }
 
-    public function callbackReturningTrue()
+    public function testCanBeRepresentedAsString(): void
     {
-        return true;
+        $this->assertSame('is accepted by specified callback', $this->acceptingCallbackConstraint()->toString());
     }
 
-    public function testConstraintCallback(): void
+    public function testIsCountable(): void
     {
-        $closureReflect = function ($parameter) {
-            return $parameter;
-        };
-
-        $closureWithoutParameter = function () {
-            return true;
-        };
-
-        $constraint = new Callback($closureWithoutParameter);
-        $this->assertTrue($constraint->evaluate('', '', true));
-
-        $constraint = new Callback($closureReflect);
-        $this->assertTrue($constraint->evaluate(true, '', true));
-        $this->assertFalse($constraint->evaluate(false, '', true));
-
-        $callback   = [$this, 'callbackReturningTrue'];
-        $constraint = new Callback($callback);
-        $this->assertTrue($constraint->evaluate(false, '', true));
-
-        $callback   = [self::class, 'staticCallbackReturningTrue'];
-        $constraint = new Callback($callback);
-        $this->assertTrue($constraint->evaluate(null, '', true));
-
-        $this->assertEquals('is accepted by specified callback', $constraint->toString());
+        $this->assertCount(1, $this->acceptingCallbackConstraint());
     }
 
-    public function testConstraintCallbackFailure(): void
+    private function acceptingCallbackConstraint(): Callback
     {
-        $constraint = new Callback(function () {
-            return false;
-        });
+        return new Callback(static fn (): bool => true);
+    }
 
-        $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Failed asserting that \'This fails\' is accepted by specified callback.');
-
-        $constraint->evaluate('This fails');
+    private function rejectingCallbackConstraint(): Callback
+    {
+        return new Callback(static fn (): bool => false);
     }
 }

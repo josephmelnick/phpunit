@@ -7,10 +7,20 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace PHPUnit\TestFixture;
+
 use PHPUnit\Framework\TestCase;
 
 final class TestWithDifferentSizes extends TestCase
 {
+    public static function provider(): array
+    {
+        return [
+            [false],
+            [true],
+        ];
+    }
+
     public function testWithSizeUnknown(): void
     {
         $this->assertTrue(true);
@@ -26,6 +36,7 @@ final class TestWithDifferentSizes extends TestCase
 
     /**
      * @depends testDataProviderWithSizeMedium
+     *
      * @medium
      */
     public function testWithSizeMedium(): void
@@ -34,6 +45,8 @@ final class TestWithDifferentSizes extends TestCase
     }
 
     /**
+     * @depends testWithSizeLarge
+     *
      * @small
      */
     public function testWithSizeSmall(): void
@@ -43,6 +56,7 @@ final class TestWithDifferentSizes extends TestCase
 
     /**
      * @dataProvider provider
+     *
      * @small
      */
     public function testDataProviderWithSizeSmall(bool $value): void
@@ -52,18 +66,11 @@ final class TestWithDifferentSizes extends TestCase
 
     /**
      * @dataProvider provider
+     *
      * @medium
      */
     public function testDataProviderWithSizeMedium(bool $value): void
     {
         $this->assertTrue(true);
-    }
-
-    public function provider(): array
-    {
-        return [
-            [false],
-            [true],
-        ];
     }
 }

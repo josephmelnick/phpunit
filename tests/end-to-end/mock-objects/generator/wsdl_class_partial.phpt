@@ -1,18 +1,18 @@
 --TEST--
-\PHPUnit\Framework\MockObject\Generator::generateClassFromWsdl('GoogleSearch.wsdl', 'GoogleSearch', array('doGoogleSearch'))
+\PHPUnit\Framework\MockObject\Generator\Generator::generateClassFromWsdl('GoogleSearch.wsdl', 'GoogleSearch', ['doGoogleSearch'])
 --SKIPIF--
 <?php declare(strict_types=1);
 if (!extension_loaded('soap')) echo 'skip: Extension soap is required';
 --FILE--
 <?php declare(strict_types=1);
-require __DIR__ . '/../../../../vendor/autoload.php';
+require_once __DIR__ . '/../../../bootstrap.php';
 
-$generator = new \PHPUnit\Framework\MockObject\Generator;
+$generator = new \PHPUnit\Framework\MockObject\Generator\Generator;
 
 print $generator->generateClassFromWsdl(
     __DIR__ . '/../../../_files/GoogleSearch.wsdl',
     'GoogleSearch',
-    array('doGoogleSearch')
+    ['doGoogleSearch']
 );
 --EXPECTF--
 declare(strict_types=1);

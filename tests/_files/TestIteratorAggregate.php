@@ -7,16 +7,21 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-class TestIteratorAggregate implements IteratorAggregate
-{
-    private $traversable;
+namespace PHPUnit\TestFixture;
 
-    public function __construct(\Traversable $traversable)
+use IteratorAggregate;
+use Traversable;
+
+final class TestIteratorAggregate implements IteratorAggregate
+{
+    private Traversable $traversable;
+
+    public function __construct(Traversable $traversable)
     {
         $this->traversable = $traversable;
     }
 
-    public function getIterator()
+    public function getIterator(): Traversable
     {
         return $this->traversable;
     }
