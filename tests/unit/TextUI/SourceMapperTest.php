@@ -10,6 +10,7 @@
 namespace PHPUnit\TextUI\Configuration;
 
 use const DIRECTORY_SEPARATOR;
+use const PHP_OS_FAMILY;
 use function realpath;
 use Generator;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -50,6 +51,13 @@ final class SourceMapperTest extends TestCase
                 false,
                 false,
                 false,
+                [
+                    'functions' => [],
+                    'methods'   => [],
+                ],
+                false,
+                false,
+                false,
             ),
         ];
 
@@ -85,6 +93,13 @@ final class SourceMapperTest extends TestCase
                 false,
                 false,
                 false,
+                [
+                    'functions' => [],
+                    'methods'   => [],
+                ],
+                false,
+                false,
+                false,
             ),
         ];
 
@@ -113,6 +128,13 @@ final class SourceMapperTest extends TestCase
                 false,
                 false,
                 false,
+                false,
+                false,
+                false,
+                [
+                    'functions' => [],
+                    'methods'   => [],
+                ],
                 false,
                 false,
                 false,
@@ -165,6 +187,13 @@ final class SourceMapperTest extends TestCase
                 false,
                 false,
                 false,
+                false,
+                false,
+                false,
+                [
+                    'functions' => [],
+                    'methods'   => [],
+                ],
                 false,
                 false,
                 false,
@@ -221,6 +250,13 @@ final class SourceMapperTest extends TestCase
                 false,
                 false,
                 false,
+                [
+                    'functions' => [],
+                    'methods'   => [],
+                ],
+                false,
+                false,
+                false,
             ),
         ];
 
@@ -262,6 +298,13 @@ final class SourceMapperTest extends TestCase
                 false,
                 false,
                 false,
+                false,
+                false,
+                false,
+                [
+                    'functions' => [],
+                    'methods'   => [],
+                ],
                 false,
                 false,
                 false,

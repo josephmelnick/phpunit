@@ -24,13 +24,16 @@ final class GeneratorTest extends TestCase
         $this->assertEquals(
             '<?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/X.Y.Z/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/X.Y/phpunit.xsd"
          bootstrap="vendor/autoload.php"
          cacheDirectory=".phpunit.cache"
          executionOrder="depends,defects"
+         shortenArraysForExportThreshold="10"
          requireCoverageMetadata="true"
          beStrictAboutCoverageMetadata="true"
          beStrictAboutOutputDuringTests="true"
+         displayDetailsOnPhpunitDeprecations="true"
+         failOnPhpunitDeprecation="true"
          failOnRisky="true"
          failOnWarning="true">
     <testsuites>
@@ -39,7 +42,7 @@ final class GeneratorTest extends TestCase
         </testsuite>
     </testsuites>
 
-    <source restrictDeprecations="true" restrictNotices="true" restrictWarnings="true">
+    <source ignoreIndirectDeprecations="true" restrictNotices="true" restrictWarnings="true">
         <include>
             <directory>src</directory>
         </include>
@@ -47,7 +50,7 @@ final class GeneratorTest extends TestCase
 </phpunit>
 ',
             $generator->generateDefaultConfiguration(
-                'X.Y.Z',
+                'https://schema.phpunit.de/X.Y/phpunit.xsd',
                 'vendor/autoload.php',
                 'tests',
                 'src',

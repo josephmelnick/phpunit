@@ -1,5 +1,5 @@
 --TEST--
-The right events are emitted in the right order for a successful test that uses an external data provider
+The right events are emitted in the right order for a successful test that uses a data provider method in a different class
 --FILE--
 <?php declare(strict_types=1);
 $traceFile = tempnam(sys_get_temp_dir(), __FILE__);
@@ -21,11 +21,11 @@ unlink($traceFile);
 --EXPECTF--
 PHPUnit Started (PHPUnit %s using %s)
 Test Runner Configured
+Event Facade Sealed
 Data Provider Method Called (PHPUnit\TestFixture\Event\DataProvider::values for test method PHPUnit\TestFixture\Event\DataProviderExternalTest::testSuccess)
 Data Provider Method Finished for PHPUnit\TestFixture\Event\DataProviderExternalTest::testSuccess:
 - PHPUnit\TestFixture\Event\DataProvider::values
 Test Suite Loaded (2 tests)
-Event Facade Sealed
 Test Runner Started
 Test Suite Sorted
 Test Runner Execution Started (2 tests)

@@ -11,10 +11,12 @@ namespace PHPUnit\Framework;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Small;
+use PHPUnit\TestFixture\AbstractTestCase;
 use PHPUnit\TestFixture\DependencyFailureTest;
 use PHPUnit\TestFixture\DependencyOnClassTest;
 use PHPUnit\TestFixture\DependencySuccessTest;
 use PHPUnit\TestFixture\MultiDependencyTest;
+use PHPUnit\TestFixture\NoTestCase;
 use PHPUnit\TestFixture\NotPublicTestCase;
 use ReflectionClass;
 
@@ -83,8 +85,8 @@ final class TestSuiteTest extends TestCase
             DependencyFailureTest::class . '::testTwo',
             DependencyFailureTest::class . '::testThree',
             DependencyFailureTest::class . '::testFour',
-            DependencyFailureTest::class . '::testHandlesDependsAnnotationForNonexistentTests',
-            DependencyFailureTest::class . '::testHandlesDependsAnnotationWithNoMethodSpecified',
+            DependencyFailureTest::class . '::testHandlesDependencyOnTestMethodThatDoesNotExist',
+            DependencyFailureTest::class . '::testHandlesDependencyOnTestMethodWithEmptyName',
             DependencySuccessTest::class . '::class',
             DependencySuccessTest::class . '::testOne',
             DependencySuccessTest::class . '::testTwo',
@@ -112,5 +114,23 @@ final class TestSuiteTest extends TestCase
             DependencySuccessTest::class . '::class',
             DependencyFailureTest::class . '::class',
         ], $suite->requires(), 'Required test names incorrect');
+    }
+
+    public function testRejectsAbstractTestClass(): void
+    {
+        $suite = TestSuite::empty('the-test-suite');
+
+        $this->expectException(Exception::class);
+
+        $suite->addTestSuite(new ReflectionClass(AbstractTestCase::class));
+    }
+
+    public function testRejectsClassThatDoesNotExtendTestClass(): void
+    {
+        $suite = TestSuite::empty('the-test-suite');
+
+        $this->expectException(Exception::class);
+
+        $suite->addTestSuite(new ReflectionClass(NoTestCase::class));
     }
 }

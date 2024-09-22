@@ -9,15 +9,14 @@
  */
 namespace PHPUnit\TestFixture;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 
-class CoverageClassTest extends TestCase
+#[CoversClass(CoveredClass::class)]
+#[UsesClass(CoveredClass::class)]
+final class CoverageClassTest extends TestCase
 {
-    /**
-     * @covers \PHPUnit\TestFixture\CoveredClass
-     *
-     * @uses \PHPUnit\TestFixture\CoveredClass
-     */
     public function testSomething(): void
     {
         $o = new CoveredClass;

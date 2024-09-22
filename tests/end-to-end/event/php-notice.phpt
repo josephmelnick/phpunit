@@ -22,8 +22,8 @@ unlink($traceFile);
 --EXPECTF--
 PHPUnit Started (PHPUnit %s using %s)
 Test Runner Configured
-Test Suite Loaded (1 test)
 Event Facade Sealed
+Test Suite Loaded (1 test)
 Test Runner Started
 Test Suite Sorted
 Test Runner Execution Started (1 test)
@@ -32,7 +32,7 @@ Test Preparation Started (PHPUnit\TestFixture\Event\PhpNoticeTest::testPhpNotice
 Test Prepared (PHPUnit\TestFixture\Event\PhpNoticeTest::testPhpNotice)
 Test Triggered PHP Notice (PHPUnit\TestFixture\Event\PhpNoticeTest::testPhpNotice)
 Only variables should be assigned by reference
-Test Triggered Suppressed PHP Notice (PHPUnit\TestFixture\Event\PhpNoticeTest::testPhpNotice)
+Test Triggered PHP Notice (PHPUnit\TestFixture\Event\PhpNoticeTest::testPhpNotice, suppressed using operator)
 Only variables should be assigned by reference
 Test Passed (PHPUnit\TestFixture\Event\PhpNoticeTest::testPhpNotice)
 Test Finished (PHPUnit\TestFixture\Event\PhpNoticeTest::testPhpNotice)

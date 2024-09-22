@@ -10,7 +10,9 @@ $_SERVER['argv'][] = '--no-output';
 $_SERVER['argv'][] = '--log-events-text';
 $_SERVER['argv'][] = $traceFile;
 $_SERVER['argv'][] = '--exclude-group';
-$_SERVER['argv'][] = 'one,two';
+$_SERVER['argv'][] = 'one';
+$_SERVER['argv'][] = '--exclude-group';
+$_SERVER['argv'][] = 'two';
 $_SERVER['argv'][] = __DIR__ . '/../../_files/groups/tests/FooTest.php';
 
 require_once __DIR__ . '/../../../bootstrap.php';
@@ -23,8 +25,8 @@ unlink($traceFile);
 --EXPECTF--
 PHPUnit Started (PHPUnit %s using %s)
 Test Runner Configured
-Test Suite Loaded (3 tests)
 Event Facade Sealed
+Test Suite Loaded (3 tests)
 Test Runner Started
 Test Suite Sorted
 Test Suite Filtered (1 test)

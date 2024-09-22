@@ -23,6 +23,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Medium;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Runner\TestSuiteSorter;
+use PHPUnit\TextUI\Configuration\Configuration;
 use SebastianBergmann\CodeCoverage\Report\Html\Colors;
 use SebastianBergmann\CodeCoverage\Report\Thresholds;
 
@@ -66,28 +67,28 @@ final class LoaderTest extends TestCase
     {
         $phpunit = $this->configuration('configuration.colors.true.xml')->phpunit();
 
-        $this->assertEquals(\PHPUnit\TextUI\Configuration\Configuration::COLOR_AUTO, $phpunit->colors());
+        $this->assertEquals(Configuration::COLOR_AUTO, $phpunit->colors());
     }
 
     public function testShouldReadColorsWhenFalseInConfigurationFile(): void
     {
         $phpunit = $this->configuration('configuration.colors.false.xml')->phpunit();
 
-        $this->assertEquals(\PHPUnit\TextUI\Configuration\Configuration::COLOR_NEVER, $phpunit->colors());
+        $this->assertEquals(Configuration::COLOR_NEVER, $phpunit->colors());
     }
 
     public function testShouldReadColorsWhenEmptyInConfigurationFile(): void
     {
         $phpunit = $this->configuration('configuration.colors.empty.xml')->phpunit();
 
-        $this->assertEquals(\PHPUnit\TextUI\Configuration\Configuration::COLOR_NEVER, $phpunit->colors());
+        $this->assertEquals(Configuration::COLOR_NEVER, $phpunit->colors());
     }
 
     public function testShouldReadColorsWhenInvalidInConfigurationFile(): void
     {
         $phpunit = $this->configuration('configuration.colors.invalid.xml')->phpunit();
 
-        $this->assertEquals(\PHPUnit\TextUI\Configuration\Configuration::COLOR_NEVER, $phpunit->colors());
+        $this->assertEquals(Configuration::COLOR_NEVER, $phpunit->colors());
     }
 
     public function testInvalidConfigurationGeneratesValidationErrors(): void
@@ -162,6 +163,22 @@ final class LoaderTest extends TestCase
 
         $file = iterator_to_array($source->excludeFiles(), false)[0];
         $this->assertSame('/path/to/file', $file->path());
+
+        $this->assertSame(
+            [
+                'functions' => [
+                    'PHPUnit\TestFixture\DeprecationTrigger\trigger_deprecation',
+                ],
+                'methods' => [
+                    'PHPUnit\TestFixture\DeprecationTrigger\DeprecationTrigger::triggerDeprecation',
+                ],
+            ],
+            $source->deprecationTriggers(),
+        );
+
+        $this->assertTrue($source->ignoreSelfDeprecations());
+        $this->assertTrue($source->ignoreDirectDeprecations());
+        $this->assertTrue($source->ignoreIndirectDeprecations());
     }
 
     public function testCodeCoverageConfigurationIsReadCorrectly(): void
@@ -340,13 +357,15 @@ final class LoaderTest extends TestCase
         $this->assertTrue($phpunit->resolveDependencies());
         $this->assertTrue($phpunit->controlGarbageCollector());
         $this->assertSame(1000, $phpunit->numberOfTestsBeforeGarbageCollection());
+        $this->assertSame(10, $phpunit->shortenArraysForExportThreshold());
     }
 
     public function test_TestDox_configuration_is_parsed_correctly(): void
     {
-        $this->assertTrue(
-            $this->configuration('configuration_testdox.xml')->phpunit()->testdoxPrinter(),
-        );
+        $configuration = $this->configuration('configuration_testdox.xml')->phpunit();
+
+        $this->assertTrue($configuration->testdoxPrinter());
+        $this->assertTrue($configuration->testdoxPrinterSummary());
     }
 
     public function testConfigurationForSingleTestSuiteCanBeLoaded(): void

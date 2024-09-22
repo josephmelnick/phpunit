@@ -10,6 +10,7 @@
 namespace PHPUnit\TextUI\XmlConfiguration;
 
 use PHPUnit\Framework\Attributes\TestDox;
+use PHPUnit\Framework\Attributes\Ticket;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Util\Xml\Loader as XmlLoader;
 
@@ -36,6 +37,33 @@ final class MigratorTest extends TestCase
             (new XmlLoader)->load(
                 (new Migrator)->migrate(
                     __DIR__ . '/../../../../_files/XmlConfigurationMigration/input-9.5.xml',
+                ),
+            ),
+        );
+    }
+
+    #[TestDox('Remove cacheDirectory attribute from <coverage> element when migrating from PHPUnit 11.1 to PHPUnit 11.2')]
+    #[Ticket('https://github.com/sebastianbergmann/phpunit/issues/5859')]
+    public function testIssue5859(): void
+    {
+        $this->assertEquals(
+            (new XmlLoader)->loadFile(__DIR__ . '/../../../../_files/XmlConfigurationMigration/output-5859.xml'),
+            (new XmlLoader)->load(
+                (new Migrator)->migrate(
+                    __DIR__ . '/../../../../_files/XmlConfigurationMigration/input-5859.xml',
+                ),
+            ),
+        );
+    }
+
+    #[TestDox('Keep relative schema path when present')]
+    public function testKeepRelativeSchema(): void
+    {
+        $this->assertEquals(
+            (new XmlLoader)->loadFile(__DIR__ . '/../../../../_files/XmlConfigurationMigration/output-relative-schema-path.xml'),
+            (new XmlLoader)->load(
+                (new Migrator)->migrate(
+                    __DIR__ . '/../../../../_files/XmlConfigurationMigration/input-relative-schema-path.xml',
                 ),
             ),
         );

@@ -11,9 +11,13 @@ namespace PHPUnit\TestFixture\Metadata\Attribute;
 
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\Attributes\UsesFunction;
+use PHPUnit\Framework\Attributes\UsesMethod;
+use PHPUnit\Framework\Attributes\UsesTrait;
 use PHPUnit\Framework\TestCase;
 
 #[UsesClass(Example::class)]
+#[UsesTrait(ExampleTrait::class)]
+#[UsesMethod(Example::class, 'method')]
 #[UsesFunction('f')]
 final class UsesTest extends TestCase
 {

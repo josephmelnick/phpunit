@@ -11,9 +11,13 @@ namespace PHPUnit\Framework\MockObject;
 
 use Exception;
 use PHPUnit\Framework\Attributes\IgnorePhpunitDeprecations;
+use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\Attributes\TestDox;
+use PHPUnit\Framework\Attributes\Ticket;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\TestFixture\MockObject\ExtendableClassCallingMethodInDestructor;
 use PHPUnit\TestFixture\MockObject\ExtendableClassWithCloneMethod;
+use PHPUnit\TestFixture\MockObject\ExtendableReadonlyClassWithCloneMethod;
 use PHPUnit\TestFixture\MockObject\InterfaceWithMethodThatExpectsObject;
 use PHPUnit\TestFixture\MockObject\InterfaceWithMethodThatHasDefaultParameterValues;
 use PHPUnit\TestFixture\MockObject\InterfaceWithNeverReturningMethod;
@@ -192,6 +196,21 @@ abstract class TestDoubleTestCase extends TestCase
         $this->assertTrue($double->doSomething());
     }
 
+    final public function testMethodConfiguredToReturnDifferentValuesOnConsecutiveCallsCannotBeCalledMoreOftenThanReturnValuesHaveBeenConfigured(): void
+    {
+        $double = $this->createTestDouble(InterfaceWithReturnTypeDeclaration::class);
+
+        $double->method('doSomething')->willReturn(false, true);
+
+        $this->assertFalse($double->doSomething());
+        $this->assertTrue($double->doSomething());
+
+        $this->expectException(NoMoreReturnValuesConfiguredException::class);
+        $this->expectExceptionMessage('Only 2 return values have been configured for PHPUnit\TestFixture\MockObject\InterfaceWithReturnTypeDeclaration::doSomething()');
+
+        $double->doSomething();
+    }
+
     final public function testMethodCanBeConfiguredToReturnDifferentValuesAndThrowExceptionsOnConsecutiveCalls(): void
     {
         $double = $this->createTestDouble(InterfaceWithReturnTypeDeclaration::class);
@@ -258,12 +277,56 @@ abstract class TestDoubleTestCase extends TestCase
         clone $double;
     }
 
+    #[TestDox('Original __clone() method is not called by default when test double object is cloned (readonly class)')]
+    #[RequiresPhp('^8.3')]
+    final public function testOriginalCloneMethodIsNotCalledByDefaultWhenTestDoubleObjectOfReadonlyClassIsCloned(): void
+    {
+        $double = clone $this->createTestDouble(ExtendableReadonlyClassWithCloneMethod::class);
+
+        $this->assertFalse($double->doSomething());
+    }
+
+    #[TestDox('Original __clone() method can optionally be called when test double object is cloned (readonly class)')]
+    #[RequiresPhp('^8.3')]
+    final public function testOriginalCloneMethodCanOptionallyBeCalledWhenTestDoubleObjectOfReadonlyClassIsCloned(): void
+    {
+        $double = $this->getMockBuilder(ExtendableReadonlyClassWithCloneMethod::class)->enableOriginalClone()->getMock();
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage(ExtendableReadonlyClassWithCloneMethod::class . '::__clone');
+
+        clone $double;
+    }
+
+    public function testMethodNameCanOnlyBeConfiguredOnce(): void
+    {
+        $double = $this->createTestDouble(InterfaceWithReturnTypeDeclaration::class);
+
+        $this->expectException(MethodNameAlreadyConfiguredException::class);
+
+        $double
+            ->method('doSomething')
+            ->method('doSomething')
+            ->willReturn(true);
+    }
+
+    #[Ticket('https://github.com/sebastianbergmann/phpunit/issues/5874')]
+    public function testDoubledMethodsCanBeCalledFromDestructorOnTestDoubleCreatedByTheReturnValueGenerator(): void
+    {
+        $double = $this->createTestDouble(ExtendableClassCallingMethodInDestructor::class);
+
+        $this->assertInstanceOf(
+            ExtendableClassCallingMethodInDestructor::class,
+            $double->doSomething(),
+        );
+    }
+
     /**
-     * @psalm-template RealInstanceType of object
+     * @template RealInstanceType of object
      *
-     * @psalm-param class-string<RealInstanceType> $type
+     * @param class-string<RealInstanceType> $type
      *
-     * @psalm-return (Stub|MockObject)&RealInstanceType
+     * @return (MockObject|Stub)&RealInstanceType
      */
     abstract protected function createTestDouble(string $type): object;
 }

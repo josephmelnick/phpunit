@@ -21,8 +21,8 @@ unlink($traceFile);
 --EXPECTF--
 [%s:%s:%s.%s / %s:%s:%s.%s] [%s bytes] PHPUnit Started (%s)
 [%s:%s:%s.%s / %s:%s:%s.%s] [%s bytes] Test Runner Configured
-[%s:%s:%s.%s / %s:%s:%s.%s] [%s bytes] Test Suite Loaded (7 tests)
 [%s:%s:%s.%s / %s:%s:%s.%s] [%s bytes] Event Facade Sealed
+[%s:%s:%s.%s / %s:%s:%s.%s] [%s bytes] Test Suite Loaded (7 tests)
 [%s:%s:%s.%s / %s:%s:%s.%s] [%s bytes] Test Runner Started
 [%s:%s:%s.%s / %s:%s:%s.%s] [%s bytes] Test Suite Sorted
 [%s:%s:%s.%s / %s:%s:%s.%s] [%s bytes] Test Runner Execution Started (7 tests)
@@ -51,12 +51,12 @@ unlink($traceFile);
 [%s:%s:%s.%s / %s:%s:%s.%s] [%s bytes] Test Preparation Started (PHPUnit\TestFixture\LogEventsText\Test::testExportObject)
 [%s:%s:%s.%s / %s:%s:%s.%s] [%s bytes] Test Prepared (PHPUnit\TestFixture\LogEventsText\Test::testExportObject)
 [%s:%s:%s.%s / %s:%s:%s.%s] [%s bytes] Test Failed (PHPUnit\TestFixture\LogEventsText\Test::testExportObject)
-                                                          Failed asserting that two variables reference the same object.
+                                                         %sFailed asserting that two variables reference the same object.
 [%s:%s:%s.%s / %s:%s:%s.%s] [%s bytes] Test Finished (PHPUnit\TestFixture\LogEventsText\Test::testExportObject)
 [%s:%s:%s.%s / %s:%s:%s.%s] [%s bytes] Test Preparation Started (PHPUnit\TestFixture\LogEventsText\Test::testExportResource)
 [%s:%s:%s.%s / %s:%s:%s.%s] [%s bytes] Test Prepared (PHPUnit\TestFixture\LogEventsText\Test::testExportResource)
 [%s:%s:%s.%s / %s:%s:%s.%s] [%s bytes] Test Failed (PHPUnit\TestFixture\LogEventsText\Test::testExportResource)
-                                                          Failed asserting that two variables reference the same resource.
+                                                         %sFailed asserting that two variables reference the same resource.
 [%s:%s:%s.%s / %s:%s:%s.%s] [%s bytes] Test Finished (PHPUnit\TestFixture\LogEventsText\Test::testExportResource)
 [%s:%s:%s.%s / %s:%s:%s.%s] [%s bytes] Test Suite Finished (PHPUnit\TestFixture\LogEventsText\Test, 7 tests)
 [%s:%s:%s.%s / %s:%s:%s.%s] [%s bytes] Test Suite Finished (CLI Arguments, 7 tests)

@@ -9,6 +9,7 @@
  */
 namespace PHPUnit\TextUI\Configuration;
 
+use const DIRECTORY_SEPARATOR;
 use function realpath;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -48,6 +49,13 @@ final class SourceFilterTest extends TestCase
                     false,
                     false,
                     false,
+                    [
+                        'functions' => [],
+                        'methods'   => [],
+                    ],
+                    false,
+                    false,
+                    false,
                 ),
             ],
             'file included using file, but excluded using directory' => [
@@ -82,6 +90,13 @@ final class SourceFilterTest extends TestCase
                     false,
                     false,
                     false,
+                    [
+                        'functions' => [],
+                        'methods'   => [],
+                    ],
+                    false,
+                    false,
+                    false,
                 ),
             ],
             'file included using file, but excluded using file' => [
@@ -112,6 +127,13 @@ final class SourceFilterTest extends TestCase
                     false,
                     false,
                     false,
+                    [
+                        'functions' => [],
+                        'methods'   => [],
+                    ],
+                    false,
+                    false,
+                    false,
                 ),
             ],
             'file included using directory' => [
@@ -139,6 +161,13 @@ final class SourceFilterTest extends TestCase
                     false,
                     false,
                     false,
+                    false,
+                    false,
+                    false,
+                    [
+                        'functions' => [],
+                        'methods'   => [],
+                    ],
                     false,
                     false,
                     false,
@@ -173,6 +202,13 @@ final class SourceFilterTest extends TestCase
                     false,
                     false,
                     false,
+                    false,
+                    false,
+                    false,
+                    [
+                        'functions' => [],
+                        'methods'   => [],
+                    ],
                     false,
                     false,
                     false,
@@ -211,6 +247,13 @@ final class SourceFilterTest extends TestCase
                     false,
                     false,
                     false,
+                    false,
+                    false,
+                    false,
+                    [
+                        'functions' => [],
+                        'methods'   => [],
+                    ],
                     false,
                     false,
                     false,

@@ -1,5 +1,5 @@
 --TEST--
-The right events are emitted in the right order for a test that fails because of an assertion failure in a postcondition method
+The right events are emitted in the right order for a test that fails because of an assertion failure in a "post condition" method
 --FILE--
 <?php declare(strict_types=1);
 $traceFile = tempnam(sys_get_temp_dir(), __FILE__);
@@ -21,8 +21,8 @@ unlink($traceFile);
 --EXPECTF--
 PHPUnit Started (PHPUnit %s using %s)
 Test Runner Configured
-Test Suite Loaded (1 test)
 Event Facade Sealed
+Test Suite Loaded (1 test)
 Test Runner Started
 Test Suite Sorted
 Test Runner Execution Started (1 test)

@@ -11,10 +11,14 @@ namespace PHPUnit\TestFixture\Metadata\Attribute;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversFunction;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\TestCase;
 
 #[CoversClass(Example::class)]
+#[CoversTrait(ExampleTrait::class)]
+#[CoversMethod(Example::class, 'method')]
 #[CoversFunction('f')]
 #[CoversNothing]
 final class CoversTest extends TestCase

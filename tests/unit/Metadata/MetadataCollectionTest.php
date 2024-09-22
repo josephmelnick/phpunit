@@ -10,11 +10,13 @@
 namespace PHPUnit\Metadata;
 
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\Small;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Metadata\Version\ComparisonRequirement;
 use PHPUnit\Util\VersionComparisonOperator;
+use stdClass;
 
 #[CoversClass(MetadataCollection::class)]
 #[CoversClass(MetadataCollectionIterator::class)]
@@ -28,6 +30,7 @@ use PHPUnit\Util\VersionComparisonOperator;
 #[UsesClass(CoversClass::class)]
 #[UsesClass(CoversDefaultClass::class)]
 #[UsesClass(CoversFunction::class)]
+#[UsesClass(CoversMethod::class)]
 #[UsesClass(CoversNothing::class)]
 #[UsesClass(DataProvider::class)]
 #[UsesClass(DependsOnClass::class)]
@@ -46,6 +49,7 @@ use PHPUnit\Util\VersionComparisonOperator;
 #[UsesClass(RequiresPhp::class)]
 #[UsesClass(RequiresPhpExtension::class)]
 #[UsesClass(RequiresPhpunit::class)]
+#[UsesClass(RequiresPhpunitExtension::class)]
 #[UsesClass(RequiresSetting::class)]
 #[UsesClass(RunClassInSeparateProcess::class)]
 #[UsesClass(RunInSeparateProcess::class)]
@@ -58,6 +62,7 @@ use PHPUnit\Util\VersionComparisonOperator;
 #[UsesClass(UsesDefaultClass::class)]
 #[UsesClass(UsesFunction::class)]
 #[Small]
+#[Group('metadata')]
 final class MetadataCollectionTest extends TestCase
 {
     public function testCanBeEmpty(): void
@@ -101,8 +106,8 @@ final class MetadataCollectionTest extends TestCase
 
     public function testCanBeMerged(): void
     {
-        $a = MetadataCollection::fromArray([Metadata::before()]);
-        $b = MetadataCollection::fromArray([Metadata::after()]);
+        $a = MetadataCollection::fromArray([Metadata::before(0)]);
+        $b = MetadataCollection::fromArray([Metadata::after(0)]);
         $c = $a->mergeWith($b);
 
         $this->assertCount(2, $c);
@@ -200,12 +205,28 @@ final class MetadataCollectionTest extends TestCase
         $this->assertTrue($collection->asArray()[0]->isCoversDefaultClass());
     }
 
+    public function test_Can_be_filtered_for_CoversTrait(): void
+    {
+        $collection = $this->collectionWithOneOfEach()->isCoversTrait();
+
+        $this->assertCount(1, $collection);
+        $this->assertTrue($collection->asArray()[0]->isCoversTrait());
+    }
+
     public function test_Can_be_filtered_for_CoversFunction(): void
     {
         $collection = $this->collectionWithOneOfEach()->isCoversFunction();
 
         $this->assertCount(1, $collection);
         $this->assertTrue($collection->asArray()[0]->isCoversFunction());
+    }
+
+    public function test_Can_be_filtered_for_CoversMethod(): void
+    {
+        $collection = $this->collectionWithOneOfEach()->isCoversMethod();
+
+        $this->assertCount(1, $collection);
+        $this->assertTrue($collection->asArray()[0]->isCoversMethod());
     }
 
     public function test_Can_be_filtered_for_CoversNothing(): void
@@ -297,6 +318,14 @@ final class MetadataCollectionTest extends TestCase
         $this->assertTrue($collection->asArray()[0]->isIgnoreDeprecations());
     }
 
+    public function test_Can_be_filtered_for_IgnorePhpunitDeprecations(): void
+    {
+        $collection = $this->collectionWithOneOfEach()->isIgnorePhpunitDeprecations();
+
+        $this->assertCount(1, $collection);
+        $this->assertTrue($collection->asArray()[0]->isIgnorePhpunitDeprecations());
+    }
+
     public function test_Can_be_filtered_for_PostCondition(): void
     {
         $collection = $this->collectionWithOneOfEach()->isPostCondition();
@@ -375,6 +404,14 @@ final class MetadataCollectionTest extends TestCase
 
         $this->assertCount(1, $collection);
         $this->assertTrue($collection->asArray()[0]->isRequiresPhpunit());
+    }
+
+    public function test_Can_be_filtered_for_RequiresPhpunitExtension(): void
+    {
+        $collection = $this->collectionWithOneOfEach()->isRequiresPhpunitExtension();
+
+        $this->assertCount(1, $collection);
+        $this->assertTrue($collection->asArray()[0]->isRequiresPhpunitExtension());
     }
 
     public function test_Can_be_filtered_for_RequiresSetting(): void
@@ -457,12 +494,28 @@ final class MetadataCollectionTest extends TestCase
         $this->assertTrue($collection->asArray()[0]->isUsesDefaultClass());
     }
 
+    public function test_Can_be_filtered_for_UsesTrait(): void
+    {
+        $collection = $this->collectionWithOneOfEach()->isUsesTrait();
+
+        $this->assertCount(1, $collection);
+        $this->assertTrue($collection->asArray()[0]->isUsesTrait());
+    }
+
     public function test_Can_be_filtered_for_UsesFunction(): void
     {
         $collection = $this->collectionWithOneOfEach()->isUsesFunction();
 
         $this->assertCount(1, $collection);
         $this->assertTrue($collection->asArray()[0]->isUsesFunction());
+    }
+
+    public function test_Can_be_filtered_for_UsesMethod(): void
+    {
+        $collection = $this->collectionWithOneOfEach()->isUsesMethod();
+
+        $this->assertCount(1, $collection);
+        $this->assertTrue($collection->asArray()[0]->isUsesMethod());
     }
 
     public function test_Can_be_filtered_for_WithoutErrorHandler(): void
@@ -477,16 +530,18 @@ final class MetadataCollectionTest extends TestCase
     {
         return MetadataCollection::fromArray(
             [
-                Metadata::afterClass(),
-                Metadata::after(),
+                Metadata::afterClass(0),
+                Metadata::after(0),
                 Metadata::backupGlobalsOnClass(true),
                 Metadata::backupStaticPropertiesOnClass(true),
-                Metadata::beforeClass(),
-                Metadata::before(),
+                Metadata::beforeClass(0),
+                Metadata::before(0),
                 Metadata::coversOnClass(''),
                 Metadata::coversClass(''),
                 Metadata::coversDefaultClass(''),
+                Metadata::coversTrait(''),
                 Metadata::coversFunction(''),
+                Metadata::coversMethod('', ''),
                 Metadata::coversNothingOnClass(),
                 Metadata::dataProvider('', ''),
                 Metadata::dependsOnClass('', false, false),
@@ -497,8 +552,9 @@ final class MetadataCollectionTest extends TestCase
                 Metadata::excludeStaticPropertyFromBackupOnClass('', ''),
                 Metadata::groupOnClass(''),
                 Metadata::ignoreDeprecationsOnClass(),
-                Metadata::postCondition(),
-                Metadata::preCondition(),
+                Metadata::ignorePhpunitDeprecationsOnClass(),
+                Metadata::postCondition(0),
+                Metadata::preCondition(0),
                 Metadata::preserveGlobalStateOnClass(true),
                 Metadata::requiresMethodOnClass('', ''),
                 Metadata::requiresFunctionOnClass(''),
@@ -517,6 +573,7 @@ final class MetadataCollectionTest extends TestCase
                         new VersionComparisonOperator('>='),
                     ),
                 ),
+                Metadata::requiresPhpunitExtensionOnClass(stdClass::class),
                 Metadata::requiresSettingOnClass('foo', 'bar'),
                 Metadata::runClassInSeparateProcess(),
                 Metadata::runInSeparateProcess(),
@@ -527,7 +584,9 @@ final class MetadataCollectionTest extends TestCase
                 Metadata::usesOnClass(''),
                 Metadata::usesClass(''),
                 Metadata::usesDefaultClass(''),
+                Metadata::usesTrait(''),
                 Metadata::usesFunction(''),
+                Metadata::usesMethod('', ''),
                 Metadata::withoutErrorHandler(),
             ],
         );

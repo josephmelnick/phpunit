@@ -17,7 +17,9 @@ use PHPUnit\Framework\Attributes\Before;
 use PHPUnit\Framework\Attributes\BeforeClass;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\CoversFunction;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\Attributes\CoversTrait;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\DataProviderExternal;
 use PHPUnit\Framework\Attributes\Depends;
@@ -45,6 +47,7 @@ use PHPUnit\Framework\Attributes\RequiresOperatingSystemFamily;
 use PHPUnit\Framework\Attributes\RequiresPhp;
 use PHPUnit\Framework\Attributes\RequiresPhpExtension;
 use PHPUnit\Framework\Attributes\RequiresPhpunit;
+use PHPUnit\Framework\Attributes\RequiresPhpunitExtension;
 use PHPUnit\Framework\Attributes\RequiresSetting;
 use PHPUnit\Framework\Attributes\RunClassInSeparateProcess;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
@@ -57,6 +60,8 @@ use PHPUnit\Framework\Attributes\TestWithJson;
 use PHPUnit\Framework\Attributes\Ticket;
 use PHPUnit\Framework\Attributes\UsesClass;
 use PHPUnit\Framework\Attributes\UsesFunction;
+use PHPUnit\Framework\Attributes\UsesMethod;
+use PHPUnit\Framework\Attributes\UsesTrait;
 use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use PHPUnit\Metadata\DisableReturnValueGenerationForTestDoubles;
 
@@ -69,7 +74,9 @@ use PHPUnit\Metadata\DisableReturnValueGenerationForTestDoubles;
 #[CoversClass(Before::class)]
 #[CoversClass(CoversClass::class)]
 #[CoversClass(CoversFunction::class)]
+#[CoversClass(CoversMethod::class)]
 #[CoversClass(CoversNothing::class)]
+#[CoversClass(CoversTrait::class)]
 #[CoversClass(DataProviderExternal::class)]
 #[CoversClass(DataProvider::class)]
 #[CoversClass(DependsExternal::class)]
@@ -98,6 +105,7 @@ use PHPUnit\Metadata\DisableReturnValueGenerationForTestDoubles;
 #[CoversClass(RequiresPhpExtension::class)]
 #[CoversClass(RequiresPhp::class)]
 #[CoversClass(RequiresPhpunit::class)]
+#[CoversClass(RequiresPhpunitExtension::class)]
 #[CoversClass(RequiresSetting::class)]
 #[CoversClass(RunClassInSeparateProcess::class)]
 #[CoversClass(RunInSeparateProcess::class)]
@@ -110,8 +118,12 @@ use PHPUnit\Metadata\DisableReturnValueGenerationForTestDoubles;
 #[CoversClass(Ticket::class)]
 #[CoversClass(UsesClass::class)]
 #[CoversClass(UsesFunction::class)]
+#[CoversClass(UsesMethod::class)]
+#[CoversClass(UsesTrait::class)]
 #[CoversClass(WithoutErrorHandler::class)]
 #[Small]
+#[Group('metadata')]
+#[Group('metadata/attributes')]
 final class AttributeParserTest extends AttributeParserTestCase
 {
     protected function parser(): Parser

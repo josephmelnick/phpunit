@@ -1,5 +1,5 @@
 --TEST--
-The right events are emitted in the right order for a test that uses a data provider that provides duplicate keys
+The right events are emitted in the right order for a test that uses a data provider that provides data with duplicate keys
 --FILE--
 <?php declare(strict_types=1);
 $traceFile = tempnam(sys_get_temp_dir(), __FILE__);
@@ -21,6 +21,7 @@ unlink($traceFile);
 --EXPECTF--
 PHPUnit Started (PHPUnit %s using %s)
 Test Runner Configured
+Event Facade Sealed
 Data Provider Method Called (PHPUnit\TestFixture\Event\DataProviderDuplicateKeyTest::provider for test method PHPUnit\TestFixture\Event\DataProviderDuplicateKeyTest::testSomething)
 Data Provider Method Finished for PHPUnit\TestFixture\Event\DataProviderDuplicateKeyTest::testSomething:
 - PHPUnit\TestFixture\Event\DataProviderDuplicateKeyTest::provider
@@ -29,7 +30,6 @@ The data provider specified for PHPUnit\TestFixture\Event\DataProviderDuplicateK
 The key "key" has already been defined by a previous data provider
 Test Runner Triggered Warning (No tests found in class "PHPUnit\TestFixture\Event\DataProviderDuplicateKeyTest".)
 Test Suite Loaded (0 tests)
-Event Facade Sealed
 Test Runner Started
 Test Suite Sorted
 Test Runner Execution Started (0 tests)
