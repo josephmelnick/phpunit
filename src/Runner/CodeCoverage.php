@@ -102,12 +102,6 @@ final class CodeCoverage
             $this->codeCoverage()->enableAnnotationsForIgnoringCode();
         }
 
-        if ($configuration->includeUncoveredFiles()) {
-            $this->codeCoverage()->includeUncoveredFiles();
-        } else {
-            $this->codeCoverage()->excludeUncoveredFiles();
-        }
-
         if ($codeCoverageFilterRegistry->get()->isEmpty()) {
             if (!$codeCoverageFilterRegistry->configured()) {
                 EventFacade::emitter()->testRunnerTriggeredWarning(
@@ -316,7 +310,9 @@ final class CodeCoverage
             $textReport = $processor->process($this->codeCoverage(), $configuration->colors());
 
             if ($configuration->coverageText() === 'php://stdout') {
-                $printer->print($textReport);
+                if (!$configuration->noOutput() && !$configuration->debug()) {
+                    $printer->print($textReport);
+                }
             } else {
                 file_put_contents($configuration->coverageText(), $textReport);
             }

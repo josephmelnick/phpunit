@@ -44,6 +44,7 @@ use SebastianBergmann\Template\Template;
 use SebastianBergmann\Timer\Timer;
 use SebastianBergmann\Type\TypeName;
 use SebastianBergmann\Version;
+use staabm\SideEffectsDetector\SideEffectsDetector;
 use TheSeer\Tokenizer\Tokenizer;
 
 /**
@@ -52,9 +53,9 @@ use TheSeer\Tokenizer\Tokenizer;
 final class ExcludeList
 {
     /**
-     * @var array<string,int>
+     * @var non-empty-array<class-string, positive-int>
      */
-    private const EXCLUDED_CLASS_NAMES = [
+    private const array EXCLUDED_CLASS_NAMES = [
         // composer
         ClassLoader::class => 1,
 
@@ -132,6 +133,9 @@ final class ExcludeList
 
         // sebastian/version
         Version::class => 1,
+
+        // staabm/side-effects-detector
+        SideEffectsDetector::class => 1,
 
         // theseer/tokenizer
         Tokenizer::class => 1,

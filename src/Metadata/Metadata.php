@@ -88,14 +88,6 @@ abstract readonly class Metadata
     }
 
     /**
-     * @param trait-string $traitName
-     */
-    public static function coversTrait(string $traitName): CoversTrait
-    {
-        return new CoversTrait(self::CLASS_LEVEL, $traitName);
-    }
-
-    /**
      * @param class-string     $className
      * @param non-empty-string $methodName
      */
@@ -110,30 +102,6 @@ abstract readonly class Metadata
     public static function coversFunction(string $functionName): CoversFunction
     {
         return new CoversFunction(self::CLASS_LEVEL, $functionName);
-    }
-
-    /**
-     * @param non-empty-string $target
-     */
-    public static function coversOnClass(string $target): Covers
-    {
-        return new Covers(self::CLASS_LEVEL, $target);
-    }
-
-    /**
-     * @param non-empty-string $target
-     */
-    public static function coversOnMethod(string $target): Covers
-    {
-        return new Covers(self::METHOD_LEVEL, $target);
-    }
-
-    /**
-     * @param class-string $className
-     */
-    public static function coversDefaultClass(string $className): CoversDefaultClass
-    {
-        return new CoversDefaultClass(self::CLASS_LEVEL, $className);
     }
 
     public static function coversNothingOnClass(): CoversNothing
@@ -479,14 +447,6 @@ abstract readonly class Metadata
     }
 
     /**
-     * @param trait-string $traitName
-     */
-    public static function UsesTrait(string $traitName): UsesTrait
-    {
-        return new UsesTrait(self::CLASS_LEVEL, $traitName);
-    }
-
-    /**
      * @param non-empty-string $functionName
      */
     public static function usesFunction(string $functionName): UsesFunction
@@ -501,30 +461,6 @@ abstract readonly class Metadata
     public static function usesMethod(string $className, string $methodName): UsesMethod
     {
         return new UsesMethod(self::CLASS_LEVEL, $className, $methodName);
-    }
-
-    /**
-     * @param non-empty-string $target
-     */
-    public static function usesOnClass(string $target): Uses
-    {
-        return new Uses(self::CLASS_LEVEL, $target);
-    }
-
-    /**
-     * @param non-empty-string $target
-     */
-    public static function usesOnMethod(string $target): Uses
-    {
-        return new Uses(self::METHOD_LEVEL, $target);
-    }
-
-    /**
-     * @param class-string $className
-     */
-    public static function usesDefaultClass(string $className): UsesDefaultClass
-    {
-        return new UsesDefaultClass(self::CLASS_LEVEL, $className);
     }
 
     public static function withoutErrorHandler(): WithoutErrorHandler
@@ -599,33 +535,9 @@ abstract readonly class Metadata
     }
 
     /**
-     * @phpstan-assert-if-true Covers $this
-     */
-    public function isCovers(): bool
-    {
-        return false;
-    }
-
-    /**
      * @phpstan-assert-if-true CoversClass $this
      */
     public function isCoversClass(): bool
-    {
-        return false;
-    }
-
-    /**
-     * @phpstan-assert-if-true CoversDefaultClass $this
-     */
-    public function isCoversDefaultClass(): bool
-    {
-        return false;
-    }
-
-    /**
-     * @phpstan-assert-if-true CoversTrait $this
-     */
-    public function isCoversTrait(): bool
     {
         return false;
     }
@@ -881,33 +793,9 @@ abstract readonly class Metadata
     }
 
     /**
-     * @phpstan-assert-if-true Uses $this
-     */
-    public function isUses(): bool
-    {
-        return false;
-    }
-
-    /**
      * @phpstan-assert-if-true UsesClass $this
      */
     public function isUsesClass(): bool
-    {
-        return false;
-    }
-
-    /**
-     * @phpstan-assert-if-true UsesDefaultClass $this
-     */
-    public function isUsesDefaultClass(): bool
-    {
-        return false;
-    }
-
-    /**
-     * @phpstan-assert-if-true UsesTrait $this
-     */
-    public function isUsesTrait(): bool
     {
         return false;
     }

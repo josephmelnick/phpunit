@@ -2,23 +2,15 @@
 The right events are emitted in the right order for the template methods of a test class that is run in process isolation
 --FILE--
 <?php declare(strict_types=1);
-$traceFile = tempnam(sys_get_temp_dir(), __FILE__);
-
 $_SERVER['argv'][] = '--do-not-cache-result';
 $_SERVER['argv'][] = '--no-configuration';
-$_SERVER['argv'][] = '--no-output';
-$_SERVER['argv'][] = '--log-events-text';
-$_SERVER['argv'][] = $traceFile;
+$_SERVER['argv'][] = '--debug';
 $_SERVER['argv'][] = '--process-isolation';
 $_SERVER['argv'][] = __DIR__ . '/_files/TemplateMethodsTest.php';
 
 require __DIR__ . '/../../bootstrap.php';
 
 (new PHPUnit\TextUI\Application)->run($_SERVER['argv']);
-
-print file_get_contents($traceFile);
-
-unlink($traceFile);
 --EXPECTF--
 PHPUnit Started (PHPUnit %s using %s)
 Test Runner Configured
@@ -31,6 +23,7 @@ Test Suite Started (PHPUnit\TestFixture\Event\TemplateMethodsTest, 2 tests)
 Before First Test Method Called (PHPUnit\TestFixture\Event\TemplateMethodsTest::setUpBeforeClass)
 Before First Test Method Finished:
 - PHPUnit\TestFixture\Event\TemplateMethodsTest::setUpBeforeClass
+Child Process Started
 Test Preparation Started (PHPUnit\TestFixture\Event\TemplateMethodsTest::testOne)
 Before First Test Method Called (PHPUnit\TestFixture\Event\TemplateMethodsTest::setUpBeforeClass)
 Before First Test Method Finished:
@@ -53,6 +46,8 @@ After Last Test Method Called (PHPUnit\TestFixture\Event\TemplateMethodsTest::te
 After Last Test Method Finished:
 - PHPUnit\TestFixture\Event\TemplateMethodsTest::tearDownAfterClass
 Test Finished (PHPUnit\TestFixture\Event\TemplateMethodsTest::testOne)
+Child Process Finished
+Child Process Started
 Test Preparation Started (PHPUnit\TestFixture\Event\TemplateMethodsTest::testTwo)
 Before First Test Method Called (PHPUnit\TestFixture\Event\TemplateMethodsTest::setUpBeforeClass)
 Before First Test Method Finished:
@@ -75,6 +70,7 @@ After Last Test Method Called (PHPUnit\TestFixture\Event\TemplateMethodsTest::te
 After Last Test Method Finished:
 - PHPUnit\TestFixture\Event\TemplateMethodsTest::tearDownAfterClass
 Test Finished (PHPUnit\TestFixture\Event\TemplateMethodsTest::testTwo)
+Child Process Finished
 After Last Test Method Called (PHPUnit\TestFixture\Event\TemplateMethodsTest::tearDownAfterClass)
 After Last Test Method Finished:
 - PHPUnit\TestFixture\Event\TemplateMethodsTest::tearDownAfterClass

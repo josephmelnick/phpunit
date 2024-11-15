@@ -576,7 +576,7 @@ if (!function_exists('PHPUnit\Framework\assertGreaterThan')) {
      *
      * @see Assert::assertGreaterThan
      */
-    function assertGreaterThan(mixed $expected, mixed $actual, string $message = ''): void
+    function assertGreaterThan(mixed $minimum, mixed $actual, string $message = ''): void
     {
         Assert::assertGreaterThan(...func_get_args());
     }
@@ -592,7 +592,7 @@ if (!function_exists('PHPUnit\Framework\assertGreaterThanOrEqual')) {
      *
      * @see Assert::assertGreaterThanOrEqual
      */
-    function assertGreaterThanOrEqual(mixed $expected, mixed $actual, string $message = ''): void
+    function assertGreaterThanOrEqual(mixed $minimum, mixed $actual, string $message = ''): void
     {
         Assert::assertGreaterThanOrEqual(...func_get_args());
     }
@@ -608,7 +608,7 @@ if (!function_exists('PHPUnit\Framework\assertLessThan')) {
      *
      * @see Assert::assertLessThan
      */
-    function assertLessThan(mixed $expected, mixed $actual, string $message = ''): void
+    function assertLessThan(mixed $maximum, mixed $actual, string $message = ''): void
     {
         Assert::assertLessThan(...func_get_args());
     }
@@ -624,7 +624,7 @@ if (!function_exists('PHPUnit\Framework\assertLessThanOrEqual')) {
      *
      * @see Assert::assertLessThanOrEqual
      */
-    function assertLessThanOrEqual(mixed $expected, mixed $actual, string $message = ''): void
+    function assertLessThanOrEqual(mixed $maximum, mixed $actual, string $message = ''): void
     {
         Assert::assertLessThanOrEqual(...func_get_args());
     }
@@ -1977,24 +1977,6 @@ if (!function_exists('PHPUnit\Framework\assertStringMatchesFormat')) {
     }
 }
 
-if (!function_exists('PHPUnit\Framework\assertStringNotMatchesFormat')) {
-    /**
-     * Asserts that a string does not match a given format string.
-     *
-     * @throws ExpectationFailedException
-     *
-     * @deprecated https://github.com/sebastianbergmann/phpunit/issues/5472
-     *
-     * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
-     *
-     * @see Assert::assertStringNotMatchesFormat
-     */
-    function assertStringNotMatchesFormat(string $format, string $string, string $message = ''): void
-    {
-        Assert::assertStringNotMatchesFormat(...func_get_args());
-    }
-}
-
 if (!function_exists('PHPUnit\Framework\assertStringMatchesFormatFile')) {
     /**
      * Asserts that a string matches a given format file.
@@ -2008,24 +1990,6 @@ if (!function_exists('PHPUnit\Framework\assertStringMatchesFormatFile')) {
     function assertStringMatchesFormatFile(string $formatFile, string $string, string $message = ''): void
     {
         Assert::assertStringMatchesFormatFile(...func_get_args());
-    }
-}
-
-if (!function_exists('PHPUnit\Framework\assertStringNotMatchesFormatFile')) {
-    /**
-     * Asserts that a string does not match a given format string.
-     *
-     * @throws ExpectationFailedException
-     *
-     * @deprecated https://github.com/sebastianbergmann/phpunit/issues/5472
-     *
-     * @no-named-arguments Parameter names are not covered by the backward compatibility promise for PHPUnit
-     *
-     * @see Assert::assertStringNotMatchesFormatFile
-     */
-    function assertStringNotMatchesFormatFile(string $formatFile, string $string, string $message = ''): void
-    {
-        Assert::assertStringNotMatchesFormatFile(...func_get_args());
     }
 }
 

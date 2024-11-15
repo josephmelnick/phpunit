@@ -20,24 +20,20 @@ require_once __DIR__ . '/../../../bootstrap.php';
 $generator = new \PHPUnit\Framework\MockObject\Generator\Generator;
 
 $mock = $generator->generate(
-    'NS\Foo',
-    true,
-    true,
-    [],
-    'MockFoo',
-    true,
-    true
+    type: 'NS\Foo',
+    mockObject: true,
+    methods: [],
+    mockClassName: 'MockFoo',
 );
 
 print $mock->classCode();
---EXPECTF--
+--EXPECT--
 declare(strict_types=1);
 
 class MockFoo extends NS\Foo implements PHPUnit\Framework\MockObject\MockObjectInternal
 {
-    use PHPUnit\Framework\MockObject\%SStubApi;
+    use PHPUnit\Framework\MockObject\StubApi;
     use PHPUnit\Framework\MockObject\MockObjectApi;
-    use PHPUnit\Framework\MockObject\GeneratedAsMockObject;
     use PHPUnit\Framework\MockObject\Method;
     use PHPUnit\Framework\MockObject\DoubledCloneMethod;
 
@@ -71,7 +67,7 @@ class MockFoo extends NS\Foo implements PHPUnit\Framework\MockObject\MockObjectI
 
         $__phpunit_result = $this->__phpunit_getInvocationHandler()->invoke(
             new \PHPUnit\Framework\MockObject\Invocation(
-                'NS\Foo', 'bar', $__phpunit_arguments, '', $this, true
+                'NS\Foo', 'bar', $__phpunit_arguments, '', $this
             )
         );
 
@@ -108,7 +104,7 @@ class MockFoo extends NS\Foo implements PHPUnit\Framework\MockObject\MockObjectI
 
         $__phpunit_result = $this->__phpunit_getInvocationHandler()->invoke(
             new \PHPUnit\Framework\MockObject\Invocation(
-                'NS\Foo', 'baz', $__phpunit_arguments, '', $this, true
+                'NS\Foo', 'baz', $__phpunit_arguments, '', $this
             )
         );
 

@@ -29,13 +29,13 @@ Foo (PHPUnit\TestFixture\Issue5884\Foo)
 
 1 test triggered 1 deprecation:
 
-1) %sFooTest.php:33
+1) %sFooTest.php:31
 foo
 
 Triggered by:
 
 * PHPUnit\TestFixture\Issue5884\FooTest::testExpectUserDeprecationMessageNOTIgnoringDeprecations
-  %sFooTest.php:29
+  %sFooTest.php:27
 
 OK, but there were issues!
 Tests: 6, Assertions: 7, Deprecations: 1.

@@ -28,13 +28,10 @@ require_once __DIR__ . '/../../../bootstrap.php';
 $generator = new \PHPUnit\Framework\MockObject\Generator\Generator;
 
 $mock = $generator->generate(
-    Issue3154::class,
-    true,
-    true,
-    [],
-    'Issue3154Mock',
-    true,
-    true
+    type: Issue3154::class,
+    mockObject: true,
+    methods: [],
+    mockClassName: 'Issue3154Mock',
 );
 
 print $mock->classCode();
@@ -43,9 +40,8 @@ declare(strict_types=1);
 
 class Issue3154Mock extends Is\Namespaced\Issue3154 implements PHPUnit\Framework\MockObject\MockObjectInternal
 {
-    use PHPUnit\Framework\MockObject\%SStubApi;
+    use PHPUnit\Framework\MockObject\StubApi;
     use PHPUnit\Framework\MockObject\MockObjectApi;
-    use PHPUnit\Framework\MockObject\GeneratedAsMockObject;
     use PHPUnit\Framework\MockObject\Method;
     use PHPUnit\Framework\MockObject\DoubledCloneMethod;
 
@@ -79,7 +75,7 @@ class Issue3154Mock extends Is\Namespaced\Issue3154 implements PHPUnit\Framework
 
         $__phpunit_result = $this->__phpunit_getInvocationHandler()->invoke(
             new \PHPUnit\Framework\MockObject\Invocation(
-                'Is\Namespaced\Issue3154', 'a', $__phpunit_arguments, 'string', $this, true
+                'Is\Namespaced\Issue3154', 'a', $__phpunit_arguments, 'string', $this
             )
         );
 

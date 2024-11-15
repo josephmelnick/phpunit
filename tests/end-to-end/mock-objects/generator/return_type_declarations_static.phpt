@@ -22,24 +22,20 @@ require_once __DIR__ . '/../../../bootstrap.php';
 $generator = new \PHPUnit\Framework\MockObject\Generator\Generator;
 
 $mock = $generator->generate(
-    'ClassWithStaticReturnTypes',
-    true,
-    true,
-    [],
-    'MockClassWithStaticReturnTypes',
-    true,
-    true
+    type: 'ClassWithStaticReturnTypes',
+    mockObject: true,
+    methods: [],
+    mockClassName: 'MockClassWithStaticReturnTypes',
 );
 
 print $mock->classCode();
---EXPECTF--
+--EXPECT--
 declare(strict_types=1);
 
 class MockClassWithStaticReturnTypes extends ClassWithStaticReturnTypes implements PHPUnit\Framework\MockObject\MockObjectInternal
 {
-    use PHPUnit\Framework\MockObject\%SStubApi;
+    use PHPUnit\Framework\MockObject\StubApi;
     use PHPUnit\Framework\MockObject\MockObjectApi;
-    use PHPUnit\Framework\MockObject\GeneratedAsMockObject;
     use PHPUnit\Framework\MockObject\Method;
     use PHPUnit\Framework\MockObject\DoubledCloneMethod;
 
@@ -73,7 +69,7 @@ class MockClassWithStaticReturnTypes extends ClassWithStaticReturnTypes implemen
 
         $__phpunit_result = $this->__phpunit_getInvocationHandler()->invoke(
             new \PHPUnit\Framework\MockObject\Invocation(
-                'ClassWithStaticReturnTypes', 'returnsStatic', $__phpunit_arguments, 'static', $this, true
+                'ClassWithStaticReturnTypes', 'returnsStatic', $__phpunit_arguments, 'static', $this
             )
         );
 
@@ -110,7 +106,7 @@ class MockClassWithStaticReturnTypes extends ClassWithStaticReturnTypes implemen
 
         $__phpunit_result = $this->__phpunit_getInvocationHandler()->invoke(
             new \PHPUnit\Framework\MockObject\Invocation(
-                'ClassWithStaticReturnTypes', 'returnsStaticOrNull', $__phpunit_arguments, '?static', $this, true
+                'ClassWithStaticReturnTypes', 'returnsStaticOrNull', $__phpunit_arguments, '?static', $this
             )
         );
 
@@ -147,7 +143,7 @@ class MockClassWithStaticReturnTypes extends ClassWithStaticReturnTypes implemen
 
         $__phpunit_result = $this->__phpunit_getInvocationHandler()->invoke(
             new \PHPUnit\Framework\MockObject\Invocation(
-                'ClassWithStaticReturnTypes', 'returnsUnionWithStatic', $__phpunit_arguments, 'static|stdClass', $this, true
+                'ClassWithStaticReturnTypes', 'returnsUnionWithStatic', $__phpunit_arguments, 'static|stdClass', $this
             )
         );
 

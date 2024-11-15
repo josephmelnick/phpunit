@@ -14,28 +14,19 @@ use function class_exists;
 use function count;
 use function interface_exists;
 use function sprintf;
-use function str_starts_with;
 use function trait_exists;
-use PHPUnit\Event\Facade as EventFacade;
 use PHPUnit\Framework\CodeCoverageException;
 use PHPUnit\Framework\InvalidCoversTargetException;
-use PHPUnit\Metadata\Covers;
 use PHPUnit\Metadata\CoversClass;
-use PHPUnit\Metadata\CoversDefaultClass;
 use PHPUnit\Metadata\CoversFunction;
 use PHPUnit\Metadata\CoversMethod;
-use PHPUnit\Metadata\CoversTrait;
 use PHPUnit\Metadata\Parser\Registry;
-use PHPUnit\Metadata\Uses;
 use PHPUnit\Metadata\UsesClass;
-use PHPUnit\Metadata\UsesDefaultClass;
 use PHPUnit\Metadata\UsesFunction;
 use PHPUnit\Metadata\UsesMethod;
-use PHPUnit\Metadata\UsesTrait;
 use ReflectionClass;
 use SebastianBergmann\CodeUnit\CodeUnitCollection;
 use SebastianBergmann\CodeUnit\Exception as CodeUnitException;
-use SebastianBergmann\CodeUnit\InvalidCodeUnitException;
 use SebastianBergmann\CodeUnit\Mapper;
 
 /**
@@ -64,69 +55,19 @@ final class CodeCoverage
             return false;
         }
 
-        $metadataForClass = Registry::parser()->forClass($className);
-        $classShortcut    = null;
-
-        if ($metadataForClass->isCoversDefaultClass()->isNotEmpty()) {
-            if (count($metadataForClass->isCoversDefaultClass()) > 1) {
-                throw new CodeCoverageException(
-                    sprintf(
-                        'More than one @coversDefaultClass annotation for class or interface "%s"',
-                        $className,
-                    ),
-                );
-            }
-
-            $metadata = $metadataForClass->isCoversDefaultClass()->asArray()[0];
-
-            assert($metadata instanceof CoversDefaultClass);
-
-            $classShortcut = $metadata->className();
-        }
-
         $codeUnits = CodeUnitCollection::fromList();
         $mapper    = new Mapper;
 
         foreach (Registry::parser()->forClassAndMethod($className, $methodName) as $metadata) {
-            if (!$metadata->isCoversClass() && !$metadata->isCoversTrait() && !$metadata->isCoversMethod() && !$metadata->isCoversFunction() && !$metadata->isCovers()) {
+            if (!$metadata->isCoversClass() && !$metadata->isCoversMethod() && !$metadata->isCoversFunction()) {
                 continue;
             }
 
             /** @phpstan-ignore booleanOr.alwaysTrue */
-            assert($metadata instanceof CoversClass || $metadata instanceof CoversTrait || $metadata instanceof CoversMethod || $metadata instanceof CoversFunction || $metadata instanceof Covers);
+            assert($metadata instanceof CoversClass || $metadata instanceof CoversMethod || $metadata instanceof CoversFunction);
 
-            if ($metadata->isCoversClass() || $metadata->isCoversTrait() || $metadata->isCoversMethod() || $metadata->isCoversFunction()) {
+            if ($metadata->isCoversClass() || $metadata->isCoversMethod() || $metadata->isCoversFunction()) {
                 $codeUnits = $codeUnits->mergeWith($this->mapToCodeUnits($metadata));
-            } elseif ($metadata->isCovers()) {
-                assert($metadata instanceof Covers);
-
-                $target = $metadata->target();
-
-                if (interface_exists($target)) {
-                    throw new InvalidCoversTargetException(
-                        sprintf(
-                            'Trying to @cover interface "%s".',
-                            $target,
-                        ),
-                    );
-                }
-
-                if ($classShortcut !== null && str_starts_with($target, '::')) {
-                    $target = $classShortcut . $target;
-                }
-
-                try {
-                    $codeUnits = $codeUnits->mergeWith($mapper->stringToCodeUnits($target));
-                } catch (InvalidCodeUnitException $e) {
-                    throw new InvalidCoversTargetException(
-                        sprintf(
-                            '"@covers %s" is invalid',
-                            $target,
-                        ),
-                        $e->getCode(),
-                        $e,
-                    );
-                }
             }
         }
 
@@ -143,60 +84,19 @@ final class CodeCoverage
      */
     public function linesToBeUsed(string $className, string $methodName): array
     {
-        $metadataForClass = Registry::parser()->forClass($className);
-        $classShortcut    = null;
-
-        if ($metadataForClass->isUsesDefaultClass()->isNotEmpty()) {
-            if (count($metadataForClass->isUsesDefaultClass()) > 1) {
-                throw new CodeCoverageException(
-                    sprintf(
-                        'More than one @usesDefaultClass annotation for class or interface "%s"',
-                        $className,
-                    ),
-                );
-            }
-
-            $metadata = $metadataForClass->isUsesDefaultClass()->asArray()[0];
-
-            assert($metadata instanceof UsesDefaultClass);
-
-            $classShortcut = $metadata->className();
-        }
-
         $codeUnits = CodeUnitCollection::fromList();
         $mapper    = new Mapper;
 
         foreach (Registry::parser()->forClassAndMethod($className, $methodName) as $metadata) {
-            if (!$metadata->isUsesClass() && !$metadata->isUsesTrait() && !$metadata->isUsesMethod() && !$metadata->isUsesFunction() && !$metadata->isUses()) {
+            if (!$metadata->isUsesClass() && !$metadata->isUsesMethod() && !$metadata->isUsesFunction()) {
                 continue;
             }
 
             /** @phpstan-ignore booleanOr.alwaysTrue */
-            assert($metadata instanceof UsesClass || $metadata instanceof UsesTrait || $metadata instanceof UsesMethod || $metadata instanceof UsesFunction || $metadata instanceof Uses);
+            assert($metadata instanceof UsesClass || $metadata instanceof UsesMethod || $metadata instanceof UsesFunction);
 
-            if ($metadata->isUsesClass() || $metadata->isUsesTrait() || $metadata->isUsesMethod() || $metadata->isUsesFunction()) {
+            if ($metadata->isUsesClass() || $metadata->isUsesMethod() || $metadata->isUsesFunction()) {
                 $codeUnits = $codeUnits->mergeWith($this->mapToCodeUnits($metadata));
-            } elseif ($metadata->isUses()) {
-                assert($metadata instanceof Uses);
-
-                $target = $metadata->target();
-
-                if ($classShortcut !== null && str_starts_with($target, '::')) {
-                    $target = $classShortcut . $target;
-                }
-
-                try {
-                    $codeUnits = $codeUnits->mergeWith($mapper->stringToCodeUnits($target));
-                } catch (InvalidCodeUnitException $e) {
-                    throw new InvalidCoversTargetException(
-                        sprintf(
-                            '"@uses %s" is invalid',
-                            $target,
-                        ),
-                        $e->getCode(),
-                        $e,
-                    );
-                }
             }
         }
 
@@ -216,8 +116,7 @@ final class CodeCoverage
             return false;
         }
 
-        if ($metadataForMethod->isCovers()->isNotEmpty() ||
-            $metadataForMethod->isCoversClass()->isNotEmpty() ||
+        if ($metadataForMethod->isCoversClass()->isNotEmpty() ||
             $metadataForMethod->isCoversFunction()->isNotEmpty()) {
             return true;
         }
@@ -232,7 +131,7 @@ final class CodeCoverage
     /**
      * @throws InvalidCoversTargetException
      */
-    private function mapToCodeUnits(CoversClass|CoversFunction|CoversMethod|CoversTrait|UsesClass|UsesFunction|UsesMethod|UsesTrait $metadata): CodeUnitCollection
+    private function mapToCodeUnits(CoversClass|CoversFunction|CoversMethod|UsesClass|UsesFunction|UsesMethod $metadata): CodeUnitCollection
     {
         $mapper = new Mapper;
         $names  = $this->names($metadata);
@@ -268,25 +167,17 @@ final class CodeCoverage
      *
      * @return non-empty-list<non-empty-string>
      */
-    private function names(CoversClass|CoversFunction|CoversMethod|CoversTrait|UsesClass|UsesFunction|UsesMethod|UsesTrait $metadata): array
+    private function names(CoversClass|CoversFunction|CoversMethod|UsesClass|UsesFunction|UsesMethod $metadata): array
     {
         $name  = $metadata->asStringForCodeUnitMapper();
         $names = [$name];
 
-        if ($metadata->isCoversTrait()) {
-            EventFacade::emitter()->testRunnerTriggeredDeprecation(
+        if (($metadata->isCoversMethod() || $metadata->isUsesMethod()) &&
+            trait_exists($metadata->className())) {
+            throw new InvalidCoversTargetException(
                 sprintf(
-                    'Targeting a trait such as %s with #[CoversTrait] is deprecated. The traits used by the class(es) you target with #[CoversClass] will be targeted as well.',
-                    $names[0],
-                ),
-            );
-        }
-
-        if ($metadata->isUsesTrait()) {
-            EventFacade::emitter()->testRunnerTriggeredDeprecation(
-                sprintf(
-                    'Targeting a trait such as %s with #[UsesTrait] is deprecated. The traits used by the class(es) you target with #[UsesClass] will be targeted as well.',
-                    $names[0],
+                    'Trait %s is not a valid target for code coverage',
+                    $metadata->className(),
                 ),
             );
         }
@@ -316,19 +207,11 @@ final class CodeCoverage
 
             assert(class_exists($names[0]) || trait_exists($names[0]));
 
-            if ($metadata->isCoversClass() && trait_exists($names[0])) {
-                EventFacade::emitter()->testRunnerTriggeredDeprecation(
+            if (trait_exists($names[0]) &&
+                ($metadata->isCoversClass() || $metadata->isUsesClass())) {
+                throw new InvalidCoversTargetException(
                     sprintf(
-                        'Targeting a trait such as %s with #[CoversClass] is deprecated. The traits used by the class(es) you target with #[CoversClass] will be targeted as well.',
-                        $names[0],
-                    ),
-                );
-            }
-
-            if ($metadata->isUsesClass() && trait_exists($names[0])) {
-                EventFacade::emitter()->testRunnerTriggeredDeprecation(
-                    sprintf(
-                        'Targeting a trait such as %s with #[UsesClass] is deprecated.  The traits used by the class(es) you target with #[UsesClass] will be targeted as well.',
+                        'Trait %s is not a valid target for code coverage',
                         $names[0],
                     ),
                 );
